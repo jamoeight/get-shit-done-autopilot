@@ -9,8 +9,8 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Core Loop
 
-- [ ] **LOOP-01**: Retry loop with configurable max iterations
-- [ ] **LOOP-02**: Fresh context per iteration (spawn new Claude instance each time)
+- [x] **LOOP-01**: Retry loop with configurable max iterations
+- [x] **LOOP-02**: Fresh context per iteration (spawn new Claude instance each time)
 - [ ] **LOOP-03**: Circuit breaker pattern (pause after N consecutive failures)
 - [ ] **LOOP-04**: Intelligent stuck detection (analyze WHY stuck, try alternative approach)
 
@@ -87,8 +87,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SAFE-02 | Phase 1: Safety Foundation | Complete |
 | STATE-01 | Phase 2: State Extensions | Complete |
 | STATE-03 | Phase 2: State Extensions | Complete |
-| LOOP-01 | Phase 3: Outer Loop Core | Pending |
-| LOOP-02 | Phase 3: Outer Loop Core | Pending |
+| LOOP-01 | Phase 3: Outer Loop Core | Complete |
+| LOOP-02 | Phase 3: Outer Loop Core | Complete |
 | STATE-02 | Phase 4: Git Checkpointing | Pending |
 | EXIT-01 | Phase 5: Exit Conditions | Pending |
 | EXIT-02 | Phase 5: Exit Conditions | Pending |
@@ -113,4 +113,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-19*
-*Last updated: 2026-01-19 after Phase 2 completion*
+*Last updated: 2026-01-19 after Phase 3 completion*
