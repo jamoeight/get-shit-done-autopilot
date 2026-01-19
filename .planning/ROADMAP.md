@@ -68,7 +68,7 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — ralph.sh script skeleton with iteration control and STATE.md parsing
+- [x] 03-01-PLAN.md — ralph.sh script skeleton with iteration control and STATE.md parsing
 - [ ] 03-02-PLAN.md — Claude CLI invocation with JSON output parsing and failure handling
 - [ ] 03-03-PLAN.md — Cross-platform compatibility (line endings, NO_COLOR support)
 
@@ -193,7 +193,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 |-------|----------------|--------|-----------|
 | 1. Safety Foundation | 2/2 | Complete | 2026-01-19 |
 | 2. State Extensions | 2/2 | Complete | 2026-01-19 |
-| 3. Outer Loop Core | 0/3 | Ready | - |
+| 3. Outer Loop Core | 2/3 | In progress | - |
 | 4. Git Checkpointing | 0/2 | Not started | - |
 | 5. Exit Conditions | 0/3 | Not started | - |
 | 6. Circuit Breaker & Recovery | 0/2 | Not started | - |

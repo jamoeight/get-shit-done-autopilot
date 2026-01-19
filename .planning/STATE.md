@@ -10,17 +10,17 @@ See: .planning/PROJECT.md (updated 2026-01-19)
 ## Current Position
 
 Phase: 3 of 10 (Outer Loop Core)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: In progress
-Last activity: 2026-01-19 - Completed 03-03-PLAN.md (Wave 1)
+Last activity: 2026-01-19 - Completed 03-01-PLAN.md
 
-Progress: [#####                         ] 17%
+Progress: [######                        ] 20%
 
 ## Next Action
 
 Command: /gsd:execute-phase 3
-Description: Execute plan 03-01 or 03-02 (Wave 2, can run in parallel)
-Read: ROADMAP.md, 03-01-PLAN.md, 03-02-PLAN.md
+Description: Execute plan 03-02 (Claude CLI invocation with JSON output parsing)
+Read: ROADMAP.md, 03-02-PLAN.md
 
 ## Iteration History
 
@@ -32,9 +32,9 @@ Read: ROADMAP.md, 03-01-PLAN.md, 03-02-PLAN.md
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
-- Average duration: ~3.4 min
-- Total execution time: ~17 minutes
+- Total plans completed: 6
+- Average duration: ~3.5 min
+- Total execution time: ~22 minutes
 
 **By Phase:**
 
@@ -42,10 +42,10 @@ Read: ROADMAP.md, 03-01-PLAN.md, 03-02-PLAN.md
 |-------|-------|-------|----------|
 | 1 - Safety Foundation | 2/2 | ~8 min | ~4 min |
 | 2 - State Extensions | 2/2 | ~7 min | ~3.5 min |
-| 3 - Outer Loop Core | 1/3 | ~2 min | ~2 min |
+| 3 - Outer Loop Core | 2/3 | ~7 min | ~3.5 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (4m), 02-01 (4m), 02-02 (3m), 03-03 (2m)
+- Last 5 plans: 02-01 (4m), 02-02 (3m), 03-03 (2m), 03-01 (5m)
 - Trend: Improving
 
 *Updated after each plan completion*
@@ -70,6 +70,9 @@ Recent decisions affecting current work:
 - ASCII-only spinner characters (|/-\\) for Git Bash compatibility
 - NO_COLOR standard via environment variable check
 - LF line endings enforced for all *.sh files via .gitattributes
+- parse_next_task extracts plan ID from STATE.md using grep -oE '[0-9]{2}-[0-9]{2}'
+- get_next_plan_after finds next uncompleted plan from ROADMAP.md checkboxes
+- Iteration success advances next_action; failure stays on same task for retry
 
 ### Pending Todos
 
@@ -82,5 +85,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-19
-Stopped at: Completed 03-03-PLAN.md (Phase 3, Wave 1)
+Stopped at: Completed 03-01-PLAN.md
 Resume file: None
