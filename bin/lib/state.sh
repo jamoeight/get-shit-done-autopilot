@@ -4,7 +4,8 @@
 #
 # Provides STATE.md manipulation functions for the ralph loop.
 # Functions: atomic_write, update_section, update_current_position,
-#            update_next_action, add_iteration_entry, get_iteration_count
+#            update_next_action, add_iteration_entry, get_iteration_count,
+#            log_exit_status
 #
 # Usage:
 #   source bin/lib/state.sh
@@ -529,5 +530,70 @@ get_total_plans() {
     count=$(echo "$count" | tr -d ' ')
 
     echo "$count"
+    return 0
+}
+
+# =============================================================================
+# Exit Logging Functions (Plan 05-01)
+# =============================================================================
+
+# log_exit_status - Log exit status to STATE.md
+# Args: status (COMPLETED/STUCK/ABORTED/INTERRUPTED), reason, last_task, iteration_count, duration
+# Returns: 0 on success, 1 on failure
+# Updates Status line in Current Position section and adds final history entry
+log_exit_status() {
+    local status="$1"
+    local reason="$2"
+    local last_task="${3:-}"
+    local iteration_count="${4:-}"
+    local duration="${5:-}"
+
+    if [[ -z "$status" || -z "$reason" ]]; then
+        echo -e "${STATE_RED}Error: log_exit_status requires status and reason${STATE_RESET}" >&2
+        return 1
+    fi
+
+    if [[ ! -f "$STATE_FILE" ]]; then
+        echo -e "${STATE_RED}Error: STATE_FILE not found: $STATE_FILE${STATE_RESET}" >&2
+        return 1
+    fi
+
+    # Create temp file
+    local temp
+    temp=$(mktemp)
+
+    # Update Status line using sed
+    # Also update Last activity line with exit timestamp
+    local timestamp
+    timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+
+    sed -e "s/^Status: .*/Status: $status/" \
+        -e "s/^Last activity: .*/Last activity: $timestamp - $reason/" \
+        "$STATE_FILE" > "$temp"
+
+    # Atomic replace
+    mv "$temp" "$STATE_FILE"
+
+    # Add final history entry with exit status
+    local task_desc="${last_task:-final}"
+    local exit_msg="Exit: $status - $reason"
+    if [[ -n "$iteration_count" ]]; then
+        exit_msg="$exit_msg (${iteration_count} iterations"
+        if [[ -n "$duration" ]]; then
+            # Format duration if numeric
+            if [[ "$duration" =~ ^[0-9]+$ ]]; then
+                local hours=$((duration / 3600))
+                local minutes=$(((duration % 3600) / 60))
+                exit_msg="$exit_msg, ${hours}h ${minutes}m)"
+            else
+                exit_msg="$exit_msg, $duration)"
+            fi
+        else
+            exit_msg="$exit_msg)"
+        fi
+    fi
+
+    add_iteration_entry "$iteration_count" "$status" "$exit_msg"
+
     return 0
 }
