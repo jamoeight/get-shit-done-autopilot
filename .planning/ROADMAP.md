@@ -13,7 +13,7 @@ GSD Lazy Mode transforms the existing interactive GSD workflow into a "fire and 
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Safety Foundation** - Hard iteration caps and fail-fast error handling to prevent runaway costs
-- [ ] **Phase 2: State Extensions** - Extended STATE.md with iteration tracking and progress indicators
+- [x] **Phase 2: State Extensions** - Extended STATE.md with iteration tracking and progress indicators
 - [ ] **Phase 3: Outer Loop Core** - Bash script that spawns fresh Claude instances with retry logic
 - [ ] **Phase 4: Git Checkpointing** - Atomic commits as iteration boundaries for progress persistence
 - [ ] **Phase 5: Exit Conditions** - Test-based completion, stuck detection, and dual-exit gate
@@ -52,8 +52,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — STATE.md schema extensions and state.sh update library
-- [ ] 02-02-PLAN.md — Progress bar generation and history rolling/archiving
+- [x] 02-01-PLAN.md — STATE.md schema extensions and state.sh update library
+- [x] 02-02-PLAN.md — Progress bar generation and history rolling/archiving
 
 ### Phase 3: Outer Loop Core
 **Goal**: Execute a bash-based retry loop that spawns fresh Claude instances
@@ -192,7 +192,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Safety Foundation | 2/2 | Complete | 2026-01-19 |
-| 2. State Extensions | 0/2 | Not started | - |
+| 2. State Extensions | 2/2 | Complete | 2026-01-19 |
 | 3. Outer Loop Core | 0/3 | Not started | - |
 | 4. Git Checkpointing | 0/2 | Not started | - |
 | 5. Exit Conditions | 0/3 | Not started | - |
