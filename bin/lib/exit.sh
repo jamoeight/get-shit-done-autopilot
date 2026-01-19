@@ -268,3 +268,72 @@ check_tests_pass() {
     result=$(parse_test_results "$output_file")
     [[ "$result" == "TESTS_PASS" ]]
 }
+
+# =============================================================================
+# Roadmap Completion Functions
+# =============================================================================
+
+# check_all_plans_complete - Check if all plans in ROADMAP.md are complete
+# Returns: 0 if all complete, 1 if incomplete plans remain
+#
+# Checks for uncompleted plans by looking for "- [ ] NN-MM-PLAN.md" patterns.
+# Uses ROADMAP_FILE from parse.sh if available, defaults to .planning/ROADMAP.md
+check_all_plans_complete() {
+    local roadmap="${ROADMAP_FILE:-.planning/ROADMAP.md}"
+
+    # Count uncompleted plans: - [ ] NN-MM-PLAN.md
+    local incomplete
+    incomplete=$(grep -cE '^\s*- \[ \] [0-9]{2}-[0-9]{2}-PLAN\.md' "$roadmap" 2>/dev/null || echo "0")
+
+    if [[ $incomplete -eq 0 ]]; then
+        return 0  # All complete
+    else
+        return 1  # Still have incomplete plans
+    fi
+}
+
+# =============================================================================
+# Dual-Exit Gate Functions
+# =============================================================================
+
+# check_completion - Dual-exit gate for milestone completion
+# Args: last_output_file (optional, for test result parsing)
+# Returns: 0 if BOTH tests pass AND all requirements done, 1 otherwise
+#
+# This implements EXIT-03: dual-exit gate requires BOTH conditions.
+# If tests pass but requirements aren't done: continue iterating
+# If requirements done but tests fail: continue iterating (something broke)
+check_completion() {
+    local last_output_file="${1:-}"
+
+    local tests_pass=false
+    local requirements_done=false
+
+    # Check 1: All tests pass (or unknown - treat as passing if we can't tell)
+    # RESEARCH.md notes: accept false negatives over false positives
+    local test_result
+    test_result=$(parse_test_results "$last_output_file")
+    if [[ "$test_result" == "TESTS_PASS" || "$test_result" == "TESTS_UNKNOWN" ]]; then
+        tests_pass=true
+    fi
+
+    # Check 2: All requirements marked complete in ROADMAP.md
+    if check_all_plans_complete; then
+        requirements_done=true
+    fi
+
+    # Dual gate: BOTH must be true
+    if [[ "$tests_pass" == "true" && "$requirements_done" == "true" ]]; then
+        return 0  # COMPLETED - both conditions met
+    fi
+
+    # Log which condition(s) not met (helpful for debugging)
+    if [[ "$tests_pass" != "true" ]]; then
+        echo "Completion check: tests not passing ($test_result)" >&2
+    fi
+    if [[ "$requirements_done" != "true" ]]; then
+        echo "Completion check: plans still incomplete" >&2
+    fi
+
+    return 1  # Not complete yet
+}
