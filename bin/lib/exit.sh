@@ -35,6 +35,10 @@ CONSECUTIVE_FAILURES=0
 LAST_FAILED_TASK=""
 STUCK_THRESHOLD=3
 
+# Circuit breaker tracking (failures across different tasks)
+CROSS_TASK_FAILURES=0
+CIRCUIT_BREAKER_THRESHOLD=5
+
 # Interrupt handling
 INTERRUPTED=false
 IN_CRITICAL_SECTION=false
@@ -97,6 +101,75 @@ check_stuck() {
 reset_failure_tracking() {
     CONSECUTIVE_FAILURES=0
     LAST_FAILED_TASK=""
+}
+
+# =============================================================================
+# Circuit Breaker Functions
+# =============================================================================
+
+# check_circuit_breaker - Check if failures across different tasks hit threshold
+# Args: none (uses global CROSS_TASK_FAILURES)
+# Returns: 0 if threshold reached (circuit open), 1 if not
+# Side effect: Increments CROSS_TASK_FAILURES counter
+# Note: Does NOT reset when task changes - that's the difference from stuck detection
+check_circuit_breaker() {
+    CROSS_TASK_FAILURES=$((CROSS_TASK_FAILURES + 1))
+
+    if [[ "$CROSS_TASK_FAILURES" -ge "$CIRCUIT_BREAKER_THRESHOLD" ]]; then
+        return 0  # Circuit breaker tripped
+    fi
+    return 1  # Circuit OK
+}
+
+# reset_circuit_breaker - Reset cross-task failure counter
+# Called after user chooses Resume or on successful iteration
+reset_circuit_breaker() {
+    CROSS_TASK_FAILURES=0
+}
+
+# handle_circuit_breaker_pause - Interactive pause when circuit breaker trips
+# Returns: 0 = Resume, 1 = Skip current task, 2 = Abort
+# In non-interactive mode, exits with STUCK status (fail fast per CONTEXT.md)
+handle_circuit_breaker_pause() {
+    local current_task="${1:-unknown}"
+
+    echo ""
+    echo -e "${EXIT_YELLOW}${EXIT_BOLD}=== CIRCUIT BREAKER: $CROSS_TASK_FAILURES consecutive failures ===${EXIT_RESET}"
+    echo -e "${EXIT_YELLOW}Multiple tasks failing - systemic issue suspected${EXIT_RESET}"
+    echo ""
+
+    # Check if interactive mode
+    if [[ ! -t 0 ]]; then
+        # Non-interactive: fail fast
+        echo -e "${EXIT_RED}Non-interactive mode - exiting with STUCK status${EXIT_RESET}"
+        return 2  # Signal abort
+    fi
+
+    echo -e "Options:"
+    echo -e "  ${EXIT_YELLOW}r${EXIT_RESET} - Resume execution (reset circuit breaker)"
+    echo -e "  ${EXIT_YELLOW}s${EXIT_RESET} - Skip current task and continue"
+    echo -e "  ${EXIT_YELLOW}a${EXIT_RESET} - Abort ralph loop"
+    echo ""
+
+    while true; do
+        read -p "Choice [r/s/a]: " choice
+        case "$choice" in
+            r|R)
+                reset_circuit_breaker
+                return 0  # Resume
+                ;;
+            s|S)
+                reset_circuit_breaker
+                return 1  # Skip
+                ;;
+            a|A)
+                return 2  # Abort
+                ;;
+            *)
+                echo "Invalid choice. Enter r, s, or a."
+                ;;
+        esac
+    done
 }
 
 # =============================================================================
