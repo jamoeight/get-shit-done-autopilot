@@ -11,8 +11,8 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **LOOP-01**: Retry loop with configurable max iterations
 - [x] **LOOP-02**: Fresh context per iteration (spawn new Claude instance each time)
-- [ ] **LOOP-03**: Circuit breaker pattern (pause after N consecutive failures)
-- [ ] **LOOP-04**: Intelligent stuck detection (analyze WHY stuck, try alternative approach)
+- [x] **LOOP-03**: Circuit breaker pattern (pause after N consecutive failures)
+- [x] **LOOP-04**: Intelligent stuck detection (analyze WHY stuck, try alternative approach)
 
 ### Exit Conditions
 
@@ -93,8 +93,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EXIT-01 | Phase 5: Exit Conditions | Complete |
 | EXIT-02 | Phase 5: Exit Conditions | Complete |
 | EXIT-03 | Phase 5: Exit Conditions | Complete |
-| LOOP-03 | Phase 6: Circuit Breaker & Recovery | Pending |
-| LOOP-04 | Phase 6: Circuit Breaker & Recovery | Pending |
+| LOOP-03 | Phase 6: Circuit Breaker & Recovery | Complete |
+| LOOP-04 | Phase 6: Circuit Breaker & Recovery | Complete |
 | STATE-04 | Phase 7: Learnings Propagation | Pending |
 | PLAN-01 | Phase 8: Upfront Planning | Pending |
 | PLAN-02 | Phase 8: Upfront Planning | Pending |
@@ -113,4 +113,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-19*
-*Last updated: 2026-01-19 after Phase 5 completion*
+*Last updated: 2026-01-19 after Phase 6 completion*
