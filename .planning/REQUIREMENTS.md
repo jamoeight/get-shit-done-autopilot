@@ -22,8 +22,8 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Safety
 
-- [ ] **SAFE-01**: Hard iteration cap (configurable maximum)
-- [ ] **SAFE-02**: Fail-fast error handling (surface failures immediately, don't continue silently)
+- [x] **SAFE-01**: Hard iteration cap (configurable maximum)
+- [x] **SAFE-02**: Fail-fast error handling (surface failures immediately, don't continue silently)
 
 ### Upfront Planning
 
@@ -83,8 +83,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SAFE-01 | Phase 1: Safety Foundation | Pending |
-| SAFE-02 | Phase 1: Safety Foundation | Pending |
+| SAFE-01 | Phase 1: Safety Foundation | Complete |
+| SAFE-02 | Phase 1: Safety Foundation | Complete |
 | STATE-01 | Phase 2: State Extensions | Pending |
 | STATE-03 | Phase 2: State Extensions | Pending |
 | LOOP-01 | Phase 3: Outer Loop Core | Pending |
@@ -113,4 +113,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-19*
-*Last updated: 2026-01-19 after roadmap creation*
+*Last updated: 2026-01-19 after Phase 1 completion*

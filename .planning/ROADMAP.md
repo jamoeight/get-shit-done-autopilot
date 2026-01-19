@@ -12,7 +12,7 @@ GSD Lazy Mode transforms the existing interactive GSD workflow into a "fire and 
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Safety Foundation** - Hard iteration caps and fail-fast error handling to prevent runaway costs
+- [x] **Phase 1: Safety Foundation** - Hard iteration caps and fail-fast error handling to prevent runaway costs
 - [ ] **Phase 2: State Extensions** - Extended STATE.md with iteration tracking and progress indicators
 - [ ] **Phase 3: Outer Loop Core** - Bash script that spawns fresh Claude instances with retry logic
 - [ ] **Phase 4: Git Checkpointing** - Atomic commits as iteration boundaries for progress persistence
@@ -37,8 +37,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 2 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Budget configuration infrastructure (prompting, persistence, display)
-- [ ] 01-02-PLAN.md — Fail-fast error handling patterns (retry, checkpoint, rollback)
+- [x] 01-01-PLAN.md — Budget configuration infrastructure (prompting, persistence, display)
+- [x] 01-02-PLAN.md — Fail-fast error handling patterns (retry, checkpoint, rollback)
 
 ### Phase 2: State Extensions
 **Goal**: Track iteration state and show progress across autonomous execution
@@ -191,7 +191,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Safety Foundation | 0/2 | Planned | - |
+| 1. Safety Foundation | 2/2 | Complete | 2026-01-19 |
 | 2. State Extensions | 0/2 | Not started | - |
 | 3. Outer Loop Core | 0/3 | Not started | - |
 | 4. Git Checkpointing | 0/2 | Not started | - |
