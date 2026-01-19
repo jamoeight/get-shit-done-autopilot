@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Safety Foundation** - Hard iteration caps and fail-fast error handling to prevent runaway costs
 - [x] **Phase 2: State Extensions** - Extended STATE.md with iteration tracking and progress indicators
 - [x] **Phase 3: Outer Loop Core** - Bash script that spawns fresh Claude instances with retry logic
-- [ ] **Phase 4: Git Checkpointing** - Atomic commits as iteration boundaries for progress persistence
+- [x] **Phase 4: Git Checkpointing** - Atomic commits as iteration boundaries for progress persistence
 - [ ] **Phase 5: Exit Conditions** - Test-based completion, stuck detection, and dual-exit gate
 - [ ] **Phase 6: Circuit Breaker & Recovery** - Pause after consecutive failures, analyze stuck state
 - [ ] **Phase 7: Learnings Propagation** - Write discovered patterns to AGENTS.md across iterations
@@ -85,7 +85,7 @@ Plans:
 
 Plans:
 - [x] 04-01-PLAN.md — Atomic commit integration (checkpoint.sh library, startup validation, commit after success)
-- [ ] 04-02-PLAN.md — History recovery (extract last task from git, validate STATE.md vs git history)
+- [x] 04-02-PLAN.md — History recovery (extract last task from git, validate STATE.md vs git history)
 
 ### Phase 5: Exit Conditions
 **Goal**: Determine when autonomous execution should stop
@@ -194,7 +194,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 1. Safety Foundation | 2/2 | Complete | 2026-01-19 |
 | 2. State Extensions | 2/2 | Complete | 2026-01-19 |
 | 3. Outer Loop Core | 3/3 | Complete | 2026-01-19 |
-| 4. Git Checkpointing | 1/2 | In Progress | - |
+| 4. Git Checkpointing | 2/2 | Complete | 2026-01-19 |
 | 5. Exit Conditions | 0/3 | Not started | - |
 | 6. Circuit Breaker & Recovery | 0/2 | Not started | - |
 | 7. Learnings Propagation | 0/2 | Not started | - |
