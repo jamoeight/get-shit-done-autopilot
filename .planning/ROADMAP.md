@@ -99,7 +99,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 05-01-PLAN.md — Exit conditions library with stuck detection, interrupt handling, exit status logging
+- [x] 05-01-PLAN.md — Exit conditions library with stuck detection, interrupt handling, exit status logging
 - [ ] 05-02-PLAN.md — Completion detection and dual-exit gate implementation
 
 ### Phase 6: Circuit Breaker & Recovery
@@ -194,7 +194,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 2. State Extensions | 2/2 | Complete | 2026-01-19 |
 | 3. Outer Loop Core | 3/3 | Complete | 2026-01-19 |
 | 4. Git Checkpointing | 2/2 | Complete | 2026-01-19 |
-| 5. Exit Conditions | 0/2 | Not started | - |
+| 5. Exit Conditions | 1/2 | In progress | - |
 | 6. Circuit Breaker & Recovery | 0/2 | Not started | - |
 | 7. Learnings Propagation | 0/2 | Not started | - |
 | 8. Upfront Planning | 0/4 | Not started | - |

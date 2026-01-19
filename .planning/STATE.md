@@ -10,17 +10,17 @@ See: .planning/PROJECT.md (updated 2026-01-19)
 ## Current Position
 
 Phase: 5 of 10 (Exit Conditions)
-Plan: 0 of 3 in current phase
+Plan: 1 of 3 in current phase
 Status: In progress
-Last activity: 2026-01-19 - Completed 04-02-PLAN.md (Phase 4 complete)
+Last activity: 2026-01-19 - Completed 05-01-PLAN.md
 
-Progress: [##########                    ] 35%
+Progress: [###########                   ] 38%
 
 ## Next Action
 
-Command: /gsd:plan-phase 5
-Description: Plan phase 05-01 (Test-based completion detection)
-Read: ROADMAP.md, Phase 5 requirements
+Command: /gsd:execute-phase 5
+Description: Execute plan 05-02 (Test-based completion detection)
+Read: ROADMAP.md, 05-02-PLAN.md
 
 ## Iteration History
 
@@ -32,9 +32,9 @@ Read: ROADMAP.md, Phase 5 requirements
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
-- Average duration: ~3.4 min
-- Total execution time: ~32 minutes
+- Total plans completed: 10
+- Average duration: ~3.6 min
+- Total execution time: ~36 minutes
 
 **By Phase:**
 
@@ -44,9 +44,10 @@ Read: ROADMAP.md, Phase 5 requirements
 | 2 - State Extensions | 2/2 | ~7 min | ~3.5 min |
 | 3 - Outer Loop Core | 3/3 | ~10 min | ~3.3 min |
 | 4 - Git Checkpointing | 2/2 | ~7 min | ~3.5 min |
+| 5 - Exit Conditions | 1/3 | ~4 min | ~4 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-01 (5m), 03-02 (3m), 03-03 (2m), 04-01 (4m), 04-02 (3m)
+- Last 5 plans: 03-02 (3m), 03-03 (2m), 04-01 (4m), 04-02 (3m), 05-01 (4m)
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -84,6 +85,10 @@ Recent decisions affecting current work:
 - STATE.md position compared against git checkpoint history at startup
 - Conflict detection: STATE.md behind git = conflict, STATE.md ahead = OK
 - Interactive mode prompts for state vs git resolution; non-interactive fails safe
+- STUCK_THRESHOLD=3 consecutive failures on same task triggers stuck exit
+- Exit codes: 0=COMPLETED, 1=STUCK, 2=ABORTED, 3=INTERRUPTED
+- Critical sections protect checkpoint commits from interrupt
+- exit_with_status returns code, caller calls exit (functions never exit directly)
 
 ### Pending Todos
 
@@ -96,5 +101,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-19
-Stopped at: Completed 04-02-PLAN.md (Phase 4 complete)
+Stopped at: Completed 05-01-PLAN.md
 Resume file: None
