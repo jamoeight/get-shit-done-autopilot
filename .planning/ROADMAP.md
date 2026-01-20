@@ -142,13 +142,11 @@ Plans:
   3. Dependencies between phases are analyzed and documented
   4. User can interactively refine plans before committing to execution
   5. All plans exist before run-milestone is invoked
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 08-01: plan-milestone-all workflow design
-- [ ] 08-02: LLM-guided phase structure determination
-- [ ] 08-03: Dependency analysis implementation
-- [ ] 08-04: Interactive refinement loop
+- [ ] 08-01-PLAN.md — Planning infrastructure (planning.sh library, state.sh/parse.sh extensions)
+- [ ] 08-02-PLAN.md — plan-milestone-all command with orchestration and refinement loop
 
 ### Phase 9: Mode Selection & Base Commands
 **Goal**: Enable users to choose Interactive vs Lazy mode at startup
@@ -197,10 +195,10 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 5. Exit Conditions | 2/2 | Complete | 2026-01-19 |
 | 6. Circuit Breaker & Recovery | 2/2 | Complete | 2026-01-19 |
 | 7. Learnings Propagation | 2/2 | Complete | 2026-01-19 |
-| 8. Upfront Planning | 0/4 | Not started | - |
+| 8. Upfront Planning | 0/2 | Not started | - |
 | 9. Mode Selection & Base Commands | 0/2 | Not started | - |
 | 10. Execution Commands | 0/4 | Not started | - |
 
 ---
 *Roadmap created: 2026-01-19*
-*Depth: Comprehensive (10 phases, 25 planned plans)*
+*Depth: Comprehensive (10 phases, 23 planned plans)*
