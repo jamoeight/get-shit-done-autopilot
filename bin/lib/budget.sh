@@ -15,7 +15,7 @@ BUDGET_YELLOW='\e[33m'
 BUDGET_RESET='\e[0m'
 
 # load_config - Load from .planning/.ralph-config or use defaults
-# Sets: MAX_ITERATIONS, TIMEOUT_HOURS (exported)
+# Sets: MAX_ITERATIONS, TIMEOUT_HOURS, CIRCUIT_BREAKER_THRESHOLD, STUCK_THRESHOLD (exported)
 load_config() {
     # Source existing config if it exists
     if [ -f "$RALPH_CONFIG_FILE" ]; then
@@ -26,10 +26,14 @@ load_config() {
     # Apply defaults for any missing values
     MAX_ITERATIONS="${MAX_ITERATIONS:-50}"
     TIMEOUT_HOURS="${TIMEOUT_HOURS:-8}"
+    CIRCUIT_BREAKER_THRESHOLD="${CIRCUIT_BREAKER_THRESHOLD:-5}"
+    STUCK_THRESHOLD="${STUCK_THRESHOLD:-3}"
 
     # Export for use by other scripts
     export MAX_ITERATIONS
     export TIMEOUT_HOURS
+    export CIRCUIT_BREAKER_THRESHOLD
+    export STUCK_THRESHOLD
 }
 
 # validate_number - Validate input is positive integer
@@ -55,7 +59,7 @@ validate_number() {
 }
 
 # save_config - Persist to .planning/.ralph-config
-# Writes current MAX_ITERATIONS and TIMEOUT_HOURS values
+# Writes current MAX_ITERATIONS, TIMEOUT_HOURS, CIRCUIT_BREAKER_THRESHOLD, STUCK_THRESHOLD
 # Preserves existing GSD_MODE value if set
 save_config() {
     # Create parent directory if needed
@@ -79,6 +83,8 @@ save_config() {
 # Last updated: $(date)
 MAX_ITERATIONS=$MAX_ITERATIONS
 TIMEOUT_HOURS=$TIMEOUT_HOURS
+CIRCUIT_BREAKER_THRESHOLD=$CIRCUIT_BREAKER_THRESHOLD
+STUCK_THRESHOLD=$STUCK_THRESHOLD
 EOF
 
     # Append mode if it was set
@@ -145,6 +151,101 @@ prompt_budget() {
     # Export the values
     export MAX_ITERATIONS
     export TIMEOUT_HOURS
+
+    save_config
+}
+
+# prompt_all_settings - Interactive prompts for all 4 config settings
+# Prompts user for MAX_ITERATIONS, TIMEOUT_HOURS, CIRCUIT_BREAKER_THRESHOLD, STUCK_THRESHOLD
+# Validates each as positive integer and saves all to config
+prompt_all_settings() {
+    load_config
+
+    echo -e "${BUDGET_YELLOW}=== Autopilot Configuration ===${BUDGET_RESET}"
+    echo ""
+
+    # Check if running interactively
+    local is_interactive=0
+    if [[ -t 0 ]]; then
+        is_interactive=1
+    fi
+
+    # Prompt for max iterations
+    while true; do
+        local input
+        if [ "$is_interactive" -eq 1 ]; then
+            read -e -p "Max iterations [default: $MAX_ITERATIONS]: " -i "$MAX_ITERATIONS" input
+        else
+            read -p "Max iterations [default: $MAX_ITERATIONS]: " input
+        fi
+        input="${input:-$MAX_ITERATIONS}"
+
+        if validate_number "$input" "Max iterations"; then
+            MAX_ITERATIONS="$input"
+            break
+        fi
+    done
+
+    # Prompt for timeout hours
+    while true; do
+        local input
+        if [ "$is_interactive" -eq 1 ]; then
+            read -e -p "Timeout hours [default: $TIMEOUT_HOURS]: " -i "$TIMEOUT_HOURS" input
+        else
+            read -p "Timeout hours [default: $TIMEOUT_HOURS]: " input
+        fi
+        input="${input:-$TIMEOUT_HOURS}"
+
+        if validate_number "$input" "Timeout hours"; then
+            TIMEOUT_HOURS="$input"
+            break
+        fi
+    done
+
+    # Prompt for circuit breaker threshold
+    while true; do
+        local input
+        if [ "$is_interactive" -eq 1 ]; then
+            read -e -p "Circuit breaker threshold [default: $CIRCUIT_BREAKER_THRESHOLD]: " -i "$CIRCUIT_BREAKER_THRESHOLD" input
+        else
+            read -p "Circuit breaker threshold [default: $CIRCUIT_BREAKER_THRESHOLD]: " input
+        fi
+        input="${input:-$CIRCUIT_BREAKER_THRESHOLD}"
+
+        if validate_number "$input" "Circuit breaker threshold"; then
+            CIRCUIT_BREAKER_THRESHOLD="$input"
+            break
+        fi
+    done
+
+    # Prompt for stuck threshold
+    while true; do
+        local input
+        if [ "$is_interactive" -eq 1 ]; then
+            read -e -p "Stuck threshold [default: $STUCK_THRESHOLD]: " -i "$STUCK_THRESHOLD" input
+        else
+            read -p "Stuck threshold [default: $STUCK_THRESHOLD]: " input
+        fi
+        input="${input:-$STUCK_THRESHOLD}"
+
+        if validate_number "$input" "Stuck threshold"; then
+            STUCK_THRESHOLD="$input"
+            break
+        fi
+    done
+
+    echo ""
+    echo -e "${BUDGET_GREEN}Settings configured:${BUDGET_RESET}"
+    echo -e "  Max iterations:      ${BUDGET_GREEN}$MAX_ITERATIONS${BUDGET_RESET}"
+    echo -e "  Timeout hours:       ${BUDGET_GREEN}$TIMEOUT_HOURS${BUDGET_RESET}"
+    echo -e "  Circuit breaker:     ${BUDGET_GREEN}$CIRCUIT_BREAKER_THRESHOLD${BUDGET_RESET} failures before halt"
+    echo -e "  Stuck threshold:     ${BUDGET_GREEN}$STUCK_THRESHOLD${BUDGET_RESET} retries on same task"
+
+    # Export all values
+    export MAX_ITERATIONS
+    export TIMEOUT_HOURS
+    export CIRCUIT_BREAKER_THRESHOLD
+    export STUCK_THRESHOLD
 
     save_config
 }
