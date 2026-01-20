@@ -21,7 +21,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 7: Learnings Propagation** - Write discovered patterns to AGENTS.md across iterations
 - [x] **Phase 8: Upfront Planning** - Generate all PLAN.md files before autonomous execution begins
 - [x] **Phase 9: Mode Selection & Base Commands** - Interactive vs Lazy mode selection at startup
-- [ ] **Phase 10: Execution Commands** - Unified autopilot command for autonomous milestone execution
+- [x] **Phase 10: Execution Commands** - Unified autopilot command for autonomous milestone execution
 
 ## Phase Details
 
@@ -177,9 +177,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 10-01-PLAN.md — Config extension and autopilot command skeleton
-- [ ] 10-02-PLAN.md — Plan detection, resume detection, and execution orchestration
-- [ ] 10-03-PLAN.md — Documentation updates (help.md, progress.md)
+- [x] 10-01-PLAN.md — Config extension and autopilot command skeleton
+- [x] 10-02-PLAN.md — Plan detection, resume detection, and execution orchestration
+- [x] 10-03-PLAN.md — Documentation updates (help.md, progress.md)
 
 ## Progress
 
@@ -197,7 +197,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 7. Learnings Propagation | 2/2 | Complete | 2026-01-19 |
 | 8. Upfront Planning | 2/2 | Complete | 2026-01-19 |
 | 9. Mode Selection & Base Commands | 2/2 | Complete | 2026-01-20 |
-| 10. Execution Commands | 0/3 | Planned | - |
+| 10. Execution Commands | 3/3 | Complete | 2026-01-20 |
 
 ---
 *Roadmap created: 2026-01-19*

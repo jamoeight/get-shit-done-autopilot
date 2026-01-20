@@ -42,9 +42,9 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Commands
 
 - [x] **CMD-01**: Mode selection at GSD startup (Interactive vs Lazy)
-- [ ] **CMD-02**: `/gsd:plan-milestone-all` command for upfront planning
-- [ ] **CMD-03**: `/gsd:ralph` command to configure retry loop (enable/disable, max iterations)
-- [ ] **CMD-04**: `/gsd:run-milestone` command to start autonomous execution
+- [x] **CMD-02**: `/gsd:plan-milestone-all` command for upfront planning
+- [x] **CMD-03**: `/gsd:autopilot` configures settings (consolidated from /gsd:ralph)
+- [x] **CMD-04**: `/gsd:autopilot` starts autonomous execution (consolidated from /gsd:run-milestone)
 - [x] **CMD-05**: All base GSD commands available in lazy mode (new-project, map-codebase, progress, etc.)
 
 ## v2 Requirements
@@ -102,9 +102,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PLAN-04 | Phase 8: Upfront Planning | Complete |
 | CMD-01 | Phase 9: Mode Selection & Base Commands | Complete |
 | CMD-05 | Phase 9: Mode Selection & Base Commands | Complete |
-| CMD-02 | Phase 10: Execution Commands | Pending |
-| CMD-03 | Phase 10: Execution Commands | Pending |
-| CMD-04 | Phase 10: Execution Commands | Pending |
+| CMD-02 | Phase 10: Execution Commands | Complete |
+| CMD-03 | Phase 10: Execution Commands | Complete |
+| CMD-04 | Phase 10: Execution Commands | Complete |
 
 **Coverage:**
 - v1 requirements: 22 total
@@ -113,4 +113,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-19*
-*Last updated: 2026-01-20 after Phase 9 completion*
+*Last updated: 2026-01-20 after Phase 10 completion - All v1 requirements complete*
