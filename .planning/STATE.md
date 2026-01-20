@@ -10,17 +10,17 @@ See: .planning/PROJECT.md (updated 2026-01-19)
 ## Current Position
 
 Phase: 9 of 10 (Mode Selection & Base Commands)
-Plan: 1 of 2 in current phase
-Status: In progress
-Last activity: 2026-01-20 - Completed 09-01-PLAN.md (Mode Infrastructure)
+Plan: 2 of 2 in current phase
+Status: Phase complete
+Last activity: 2026-01-20 - Completed 09-02-PLAN.md (Base Commands)
 
-Progress: [#########################     ] 85%
+Progress: [##########################    ] 90%
 
 ## Next Action
 
-Command: /gsd:execute-phase 9
-Description: Execute remaining plan (09-02) for Phase 9
-Read: 09-02-PLAN.md
+Command: /gsd:plan-phase 10
+Description: Plan Phase 10 - Execution Commands
+Read: ROADMAP.md Phase 10
 
 
 ## Planning Progress
@@ -44,9 +44,9 @@ Read: 09-02-PLAN.md
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 18
+- Total plans completed: 19
 - Average duration: ~4 min
-- Total execution time: ~72 minutes
+- Total execution time: ~76 minutes
 
 **By Phase:**
 
@@ -60,10 +60,10 @@ Read: 09-02-PLAN.md
 | 6 - Circuit Breaker | 2/2 | ~8 min | ~4 min |
 | 7 - Learnings Propagation | 2/2 | ~8 min | ~4 min |
 | 8 - Upfront Planning | 2/2 | ~11 min | ~5.5 min |
-| 9 - Mode Selection | 1/2 | ~3 min | ~3 min |
+| 9 - Mode Selection | 2/2 | ~7 min | ~3.5 min |
 
 **Recent Trend:**
-- Last 5 plans: 07-01 (4m), 07-02 (4m), 08-01 (8m), 08-02 (3m), 09-01 (3m)
+- Last 5 plans: 07-02 (4m), 08-01 (8m), 08-02 (3m), 09-01 (3m), 09-02 (4m)
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -135,6 +135,10 @@ Recent decisions affecting current work:
 - Toggle behavior: empty -> lazy -> interactive -> lazy (for /gsd:lazy-mode)
 - Mid-milestone mode switching allowed with warning (not blocked)
 - require_mode() returns error code, caller handles exit (per project convention)
+- Mode labels use (interactive) and (lazy) suffix on command names in help.md
+- Mode display shows "Not Set" when GSD_MODE is empty
+- Step 0 mode validation pattern: source config, check CURRENT_MODE, error with alternative
+- plan-milestone-all allows unset mode (user can plan all without choosing mode)
 
 ### Pending Todos
 
@@ -147,5 +151,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-20
-Stopped at: Completed 09-01-PLAN.md (Mode Infrastructure)
+Stopped at: Completed 09-02-PLAN.md (Base Commands) - Phase 9 complete
 Resume file: None
