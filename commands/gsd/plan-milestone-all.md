@@ -39,6 +39,31 @@ Uses functions from:
 
 <process>
 
+## 0. Validate Mode
+
+Check if running in interactive mode (where this command is disabled):
+
+```bash
+# Read current mode
+source .planning/.ralph-config 2>/dev/null || true
+CURRENT_MODE="${GSD_MODE:-}"
+
+if [[ "$CURRENT_MODE" == "interactive" ]]; then
+    echo ""
+    echo "Error: /gsd:plan-milestone-all is only available in Lazy mode."
+    echo "Current mode: Interactive"
+    echo ""
+    echo "In Interactive mode, use /gsd:plan-phase to plan one phase at a time."
+    echo "Run /gsd:lazy-mode to switch to Lazy mode."
+    # Exit - do not continue
+fi
+
+# Also allow if mode not set (user can plan all even without mode selection)
+```
+
+If mode is "interactive", output the error and STOP. Do not proceed with planning.
+Note: If mode is unset, allow the command (user may want to plan all regardless).
+
 ## 1. Validate Environment
 
 ```bash

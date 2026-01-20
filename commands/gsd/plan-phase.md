@@ -42,6 +42,28 @@ Normalize phase input in step 2 before any directory lookups.
 
 <process>
 
+## 0. Validate Mode
+
+Check if running in lazy mode (where this command is disabled):
+
+```bash
+# Read current mode
+source .planning/.ralph-config 2>/dev/null || true
+CURRENT_MODE="${GSD_MODE:-}"
+
+if [[ "$CURRENT_MODE" == "lazy" ]]; then
+    echo ""
+    echo "Error: /gsd:plan-phase is only available in Interactive mode."
+    echo "Current mode: Lazy"
+    echo ""
+    echo "In Lazy mode, use /gsd:plan-milestone-all to plan all phases at once."
+    echo "Run /gsd:lazy-mode to switch to Interactive mode."
+    # Exit - do not continue
+fi
+```
+
+If mode is "lazy", output the error and STOP. Do not proceed with planning.
+
 ## 1. Validate Environment
 
 ```bash

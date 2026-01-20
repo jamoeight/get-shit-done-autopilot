@@ -38,6 +38,27 @@ Phase: $ARGUMENTS
 </context>
 
 <process>
+0. **Validate mode**
+   Check if running in lazy mode (where this command is disabled):
+
+   ```bash
+   # Read current mode
+   source .planning/.ralph-config 2>/dev/null || true
+   CURRENT_MODE="${GSD_MODE:-}"
+
+   if [[ "$CURRENT_MODE" == "lazy" ]]; then
+       echo ""
+       echo "Error: /gsd:execute-phase is only available in Interactive mode."
+       echo "Current mode: Lazy"
+       echo ""
+       echo "In Lazy mode, use /gsd:run-milestone for autonomous execution."
+       echo "Run /gsd:lazy-mode to switch to Interactive mode."
+       # Exit - do not continue
+   fi
+   ```
+
+   If mode is "lazy", output the error and STOP. Do not proceed with execution.
+
 1. **Validate phase exists**
    - Find phase directory matching argument
    - Count PLAN.md files
