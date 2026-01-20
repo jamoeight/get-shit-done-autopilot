@@ -1,9 +1,11 @@
 #!/bin/bash
 # GSD Ralph - STATE.md and ROADMAP.md Parsing
-# Part of Phase 3: Outer Loop Core
+# Part of Phase 3: Outer Loop Core (extended in Phase 8)
 #
 # Provides functions for extracting task information from planning files.
-# Functions: parse_next_task, find_plan_file, get_plan_name, get_next_plan_after
+# Functions: parse_next_task, find_plan_file, get_plan_name, get_next_plan_after,
+#            get_all_phases, phase_has_plans, get_phase_name, get_unplanned_phases,
+#            count_phase_plans
 #
 # Usage:
 #   source bin/lib/parse.sh
@@ -11,6 +13,9 @@
 #   find_plan_file "03-01"    # Returns path to plan file
 #   get_plan_name "03-01"     # Returns plan objective
 #   get_next_plan_after "03-01"  # Returns "03-02" or next uncompleted plan
+#   get_all_phases            # Returns "1 2 3 4 5 6 7 8 9 10"
+#   phase_has_plans "1"       # Returns 0 if phase 1 has plans
+#   get_unplanned_phases      # Returns phases without PLAN.md files
 
 # Configuration
 STATE_FILE="${STATE_FILE:-.planning/STATE.md}"
@@ -193,5 +198,152 @@ get_next_plan_after() {
     fi
 
     echo "$found_next"
+    return 0
+}
+
+# =============================================================================
+# Phase Enumeration Functions (Plan 08-01)
+# =============================================================================
+
+# get_all_phases - Return list of all phases from ROADMAP.md
+# Returns: Space-separated list of phase numbers (e.g., "1 2 3 4 5 6 7 8 9 10")
+# Return code: 0 on success, 1 on failure
+# Handles both integer (5) and decimal (2.1) phase numbers
+get_all_phases() {
+    local roadmap="${ROADMAP_FILE:-.planning/ROADMAP.md}"
+
+    if [[ ! -f "$roadmap" ]]; then
+        echo -e "${PARSE_RED}Error: ROADMAP_FILE not found: $roadmap${PARSE_RESET}" >&2
+        return 1
+    fi
+
+    # Parse "### Phase N:" headers and extract phase numbers
+    # Handles both integer (5) and decimal (2.1) phase numbers
+    grep -E '^### Phase [0-9]+(\.[0-9]+)?:' "$roadmap" | \
+        sed 's/### Phase \([0-9.]*\):.*/\1/' | \
+        sort -t. -k1,1n -k2,2n | \
+        tr '\n' ' ' | \
+        sed 's/ $//'
+    return 0
+}
+
+# phase_has_plans - Check if phase has PLAN.md files
+# Args: phase_num
+# Returns: 0 if plans exist, 1 if not
+phase_has_plans() {
+    local phase_num="$1"
+
+    if [[ -z "$phase_num" ]]; then
+        echo -e "${PARSE_RED}Error: phase_has_plans requires phase_num${PARSE_RESET}" >&2
+        return 1
+    fi
+
+    # Pad to 2 digits for directory matching
+    local padded
+    local clean_num
+    # Handle potential non-numeric input
+    if [[ "$phase_num" =~ ^[0-9]+$ ]]; then
+        clean_num=$((10#$phase_num))
+    else
+        clean_num="$phase_num"
+    fi
+    padded=$(printf "%02d" "$clean_num" 2>/dev/null || echo "$phase_num")
+
+    # Check for PLAN.md files in phase directory
+    local plans
+    plans=$(ls .planning/phases/${padded}-*/*-PLAN.md 2>/dev/null | head -1)
+    if [[ -n "$plans" ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# get_phase_name - Get phase name from ROADMAP.md
+# Args: phase_num
+# Returns: Phase name (e.g., "Safety Foundation" for phase 1)
+# Return code: 0 on success, 1 on failure
+get_phase_name() {
+    local phase_num="$1"
+    local roadmap="${ROADMAP_FILE:-.planning/ROADMAP.md}"
+
+    if [[ -z "$phase_num" ]]; then
+        echo -e "${PARSE_RED}Error: get_phase_name requires phase_num${PARSE_RESET}" >&2
+        return 1
+    fi
+
+    if [[ ! -f "$roadmap" ]]; then
+        echo -e "${PARSE_RED}Error: ROADMAP_FILE not found: $roadmap${PARSE_RESET}" >&2
+        return 1
+    fi
+
+    # Parse "### Phase N: Name" header and extract name
+    local name
+    name=$(grep -E "^### Phase ${phase_num}:" "$roadmap" | \
+        sed "s/### Phase ${phase_num}: //")
+
+    if [[ -z "$name" ]]; then
+        echo "Phase $phase_num"
+        return 0
+    fi
+
+    echo "$name"
+    return 0
+}
+
+# get_unplanned_phases - Return list of phases without plans
+# Returns: Space-separated list of phase numbers without PLAN.md files
+# Return code: 0 on success
+get_unplanned_phases() {
+    local all_phases
+    all_phases=$(get_all_phases)
+
+    if [[ -z "$all_phases" ]]; then
+        return 0
+    fi
+
+    local unplanned=""
+    for phase in $all_phases; do
+        if ! phase_has_plans "$phase"; then
+            if [[ -n "$unplanned" ]]; then
+                unplanned="$unplanned $phase"
+            else
+                unplanned="$phase"
+            fi
+        fi
+    done
+
+    echo "$unplanned"
+    return 0
+}
+
+# count_phase_plans - Count PLAN.md files for a phase
+# Args: phase_num
+# Returns: Number of PLAN.md files (prints to stdout)
+# Return code: 0 on success
+count_phase_plans() {
+    local phase_num="$1"
+
+    if [[ -z "$phase_num" ]]; then
+        echo "0"
+        return 0
+    fi
+
+    # Pad to 2 digits for directory matching
+    local padded
+    local clean_num
+    # Handle potential non-numeric input
+    if [[ "$phase_num" =~ ^[0-9]+$ ]]; then
+        clean_num=$((10#$phase_num))
+    else
+        clean_num="$phase_num"
+    fi
+    padded=$(printf "%02d" "$clean_num" 2>/dev/null || echo "$phase_num")
+
+    # Count PLAN.md files
+    local count
+    count=$(ls .planning/phases/${padded}-*/*-PLAN.md 2>/dev/null | wc -l | tr -d ' ')
+
+    echo "$count"
     return 0
 }
