@@ -41,6 +41,86 @@ npx get-shit-done-cc
 
 ---
 
+<div align="center">
+
+## 🧪 Lazy Mode (Experimental)
+
+**Fire and forget. Plan everything upfront, walk away, wake up to done.**
+
+</div>
+
+> [!WARNING]
+> Lazy Mode is experimental. It works, but expect rough edges. Feedback welcome.
+
+Lazy Mode flips the GSD workflow: instead of planning and executing phase-by-phase, you do **all planning in one session**, then let agents grind through execution autonomously.
+
+### The Workflow
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  YOU ARE HERE (planning session)                            │
+│                                                             │
+│  /gsd:lazy-mode          → Enable lazy mode                 │
+│  /gsd:new-project        → Questions, research, roadmap     │
+│  /gsd:plan-milestone-all → Generate ALL plans at once       │
+│                                                             │
+├─────────────────────────────────────────────────────────────┤
+│  WALK AWAY HERE ☕                                           │
+│                                                             │
+│  /gsd:autopilot          → Autonomous execution begins      │
+│                                                             │
+│  • Loops through all plans                                  │
+│  • Fresh context per iteration                              │
+│  • Commits after each success                               │
+│  • Circuit breaker on repeated failures                     │
+│  • Ctrl+C for graceful stop with resume                     │
+│                                                             │
+├─────────────────────────────────────────────────────────────┤
+│  WAKE UP TO DONE 🎉                                          │
+│                                                             │
+│  • All phases executed                                      │
+│  • Clean git history                                        │
+│  • Milestone complete                                       │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Quick Start
+
+```bash
+# 1. Enable lazy mode
+/gsd:lazy-mode
+
+# 2. Initialize project (stay for this — ~15-30 min of questions + research)
+/gsd:new-project
+
+# 3. Generate all plans (stay for this — review and approve)
+/gsd:plan-milestone-all
+
+# 4. Walk away
+/gsd:autopilot
+```
+
+### Commands
+
+| Command | What it does |
+|---------|--------------|
+| `/gsd:lazy-mode` | Toggle between Interactive and Lazy mode |
+| `/gsd:plan-milestone-all` | Generate ALL PLAN.md files in one session |
+| `/gsd:autopilot` | Configure settings + start autonomous execution |
+
+### Why Stay for Planning?
+
+The "fire and forget" part starts at `/gsd:autopilot`. Before that, you're front-loading judgment:
+
+- **Questions** — System needs to understand what you're building
+- **Research** — AI investigates the domain so plans are informed
+- **Roadmap review** — You approve the scope before execution
+- **Plan generation** — You can refine plans before they run
+
+This prevents waking up to "the AI built something I didn't want." Once you approve the plans, execution is mechanical — that's when you walk away.
+
+---
+
 ## Why I Built This
 
 I'm a solo developer. I don't write code — Claude Code does.
