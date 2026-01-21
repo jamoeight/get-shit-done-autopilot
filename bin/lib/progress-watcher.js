@@ -119,7 +119,7 @@ function formatStatus(status) {
 }
 
 // Display current state
-function displayProgress(stateFile, logFile) {
+function displayProgress(stateFile, logFile, isPaused) {
   clearScreen();
 
   const now = new Date().toLocaleTimeString();
@@ -182,23 +182,64 @@ function displayProgress(stateFile, logFile) {
   }
 
   console.log(`${COLORS.DIM}───────────────────────────────────────────────────────────────────${COLORS.RESET}`);
-  console.log(`${COLORS.DIM}Watching for changes... (Ctrl+C to exit)${COLORS.RESET}`);
+
+  // Display mode and keyboard shortcuts
+  const modeColor = isPaused ? COLORS.YELLOW : COLORS.GREEN;
+  const modeText = isPaused ? 'PAUSED' : 'RUNNING';
+  console.log(`Mode: ${modeColor}${COLORS.BOLD}[${modeText}]${COLORS.RESET}`);
+  console.log(`${COLORS.DIM}Keys: [p]ause  [r]esume  [q]uit${COLORS.RESET}`);
 }
 
 // Main watch function
 function watchProgress(projectRoot) {
   const stateFile = path.join(projectRoot, '.planning', 'STATE.md');
   const logFile = path.join(projectRoot, '.planning', 'ralph.log');
+  const pauseFile = path.join(projectRoot, '.planning', '.pause');
+
+  // Track pause state
+  let isPaused = fs.existsSync(pauseFile);
 
   // Initial display
-  displayProgress(stateFile, logFile);
+  displayProgress(stateFile, logFile, isPaused);
+
+  // Enable keyboard input handling
+  process.stdin.setRawMode(true);
+  process.stdin.resume();
+  process.stdin.on('data', (key) => {
+    const keyStr = key.toString().toLowerCase();
+
+    if (keyStr === 'p') {
+      // Pause - create pause file
+      try {
+        fs.writeFileSync(pauseFile, '');
+        isPaused = true;
+        displayProgress(stateFile, logFile, isPaused);
+      } catch (err) {
+        console.error(`${COLORS.RED}Error creating pause file: ${err.message}${COLORS.RESET}`);
+      }
+    } else if (keyStr === 'r') {
+      // Resume - delete pause file
+      try {
+        if (fs.existsSync(pauseFile)) {
+          fs.unlinkSync(pauseFile);
+        }
+        isPaused = false;
+        displayProgress(stateFile, logFile, isPaused);
+      } catch (err) {
+        console.error(`${COLORS.RED}Error deleting pause file: ${err.message}${COLORS.RESET}`);
+      }
+    } else if (keyStr === 'q' || key[0] === 3) {
+      // Quit (q or Ctrl+C)
+      cleanup();
+    }
+  });
 
   // Watch STATE.md
   let stateWatcher = null;
   if (fs.existsSync(path.dirname(stateFile))) {
     stateWatcher = fs.watch(path.dirname(stateFile), (eventType, filename) => {
       if (filename === 'STATE.md') {
-        displayProgress(stateFile, logFile);
+        displayProgress(stateFile, logFile, isPaused);
       }
     });
   }
@@ -208,7 +249,18 @@ function watchProgress(projectRoot) {
   if (fs.existsSync(path.dirname(logFile))) {
     logWatcher = fs.watch(path.dirname(logFile), (eventType, filename) => {
       if (filename === 'ralph.log') {
-        displayProgress(stateFile, logFile);
+        displayProgress(stateFile, logFile, isPaused);
+      }
+    });
+  }
+
+  // Watch pause file to update state when changed externally
+  let pauseWatcher = null;
+  if (fs.existsSync(path.dirname(pauseFile))) {
+    pauseWatcher = fs.watch(path.dirname(pauseFile), (eventType, filename) => {
+      if (filename === '.pause') {
+        isPaused = fs.existsSync(pauseFile);
+        displayProgress(stateFile, logFile, isPaused);
       }
     });
   }
@@ -218,6 +270,11 @@ function watchProgress(projectRoot) {
     console.log(`\n\n${COLORS.YELLOW}Stopping progress watcher...${COLORS.RESET}`);
     if (stateWatcher) stateWatcher.close();
     if (logWatcher) logWatcher.close();
+    if (pauseWatcher) pauseWatcher.close();
+    if (process.stdin.setRawMode) {
+      process.stdin.setRawMode(false);
+    }
+    process.stdin.pause();
     process.exit(0);
   };
 
@@ -227,7 +284,9 @@ function watchProgress(projectRoot) {
   // Keep process alive
   setInterval(() => {
     // Refresh display every 10 seconds even without file changes
-    displayProgress(stateFile, logFile);
+    // Also check if pause file state changed
+    isPaused = fs.existsSync(pauseFile);
+    displayProgress(stateFile, logFile, isPaused);
   }, 10000);
 }
 
