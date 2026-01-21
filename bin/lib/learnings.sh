@@ -362,6 +362,127 @@ extract_learnings_from_summary() {
 }
 
 # =============================================================================
+# Failure Learning Functions
+# =============================================================================
+
+# ensure_failure_section - Create Failure Context section if it doesn't exist
+# Returns: 0 always
+# Creates AGENTS.md via init_agents_file if needed
+ensure_failure_section() {
+    if [[ ! -f "$AGENTS_FILE" ]]; then
+        init_agents_file
+    fi
+
+    # Check if Failure Context section exists
+    if grep -q "^## Failure Context" "$AGENTS_FILE" 2>/dev/null; then
+        return 0
+    fi
+
+    # Append Failure Context section at end
+    {
+        echo ""
+        echo "## Failure Context"
+        echo ""
+        echo "Failure learnings from current phase - cleared on phase completion."
+        echo ""
+    } >> "$AGENTS_FILE"
+
+    return 0
+}
+
+# extract_failure_reason - Extract failure information from Claude's JSON output
+# Args: output_file - Path to Claude's JSON output file
+# Output: Extracted failure reason to stdout
+# Returns: 0 always (extraction is best-effort)
+#
+# Tries multiple extraction strategies:
+# 1. Look for FAILURE_REASON: marker in .result field
+# 2. Extract .error field from JSON
+# 3. Grep for common error patterns
+# 4. Default fallback message
+extract_failure_reason() {
+    local output_file="$1"
+
+    if [[ -z "$output_file" || ! -f "$output_file" ]]; then
+        echo "Task failed (no specific error message captured)"
+        return 0
+    fi
+
+    # Primary extraction: Look for structured markers in Claude's result
+    local result=""
+    if command -v jq &>/dev/null; then
+        result=$(jq -r '.result // empty' "$output_file" 2>/dev/null)
+    else
+        # Fallback: Extract result field using grep/sed
+        result=$(grep -o '"result"[[:space:]]*:[[:space:]]*"[^"]*"' "$output_file" 2>/dev/null | sed 's/"result"[[:space:]]*:[[:space:]]*"//' | sed 's/"$//')
+    fi
+
+    # Try to find FAILURE_REASON marker in the extracted result text
+    if [[ -n "$result" ]]; then
+        # Use grep with Perl regex for better pattern matching
+        local reason
+        if echo "$result" | grep -q 'FAILURE_REASON:'; then
+            reason=$(echo "$result" | grep -oP 'FAILURE_REASON:\s*\K.*' 2>/dev/null | head -1)
+            # If Perl regex not available, fall back to sed
+            if [[ -z "$reason" ]]; then
+                reason=$(echo "$result" | grep 'FAILURE_REASON:' | sed 's/.*FAILURE_REASON:[[:space:]]*//' | head -1)
+            fi
+            if [[ -n "$reason" ]]; then
+                # Truncate at 500 chars, preserving complete words
+                if [[ ${#reason} -gt 500 ]]; then
+                    reason=$(echo "$reason" | cut -c1-500 | sed 's/[[:space:]][^[:space:]]*$//')
+                fi
+                echo "$reason"
+                return 0
+            fi
+        fi
+    fi
+
+    # Fallback: Extract error field from JSON
+    local error=""
+    if command -v jq &>/dev/null; then
+        error=$(jq -r '.error // empty' "$output_file" 2>/dev/null)
+    else
+        # Fallback: Extract error field using grep/sed
+        error=$(grep -o '"error"[[:space:]]*:[[:space:]]*"[^"]*"' "$output_file" 2>/dev/null | sed 's/"error"[[:space:]]*:[[:space:]]*"//' | sed 's/"$//')
+    fi
+
+    if [[ -n "$error" && "$error" != "null" ]]; then
+        # Truncate at 500 chars, preserving complete words
+        if [[ ${#error} -gt 500 ]]; then
+            error=$(echo "$error" | cut -c1-500 | sed 's/[[:space:]][^[:space:]]*$//')
+        fi
+        echo "$error"
+        return 0
+    fi
+
+    # Fallback: Look for common error patterns in the result field first
+    if [[ -n "$result" ]]; then
+        local error_pattern
+        error_pattern=$(echo "$result" | grep -iE '(error|failed|exception|cannot|not found)' | head -1)
+        if [[ -n "$error_pattern" ]]; then
+            # Truncate at 500 chars
+            if [[ ${#error_pattern} -gt 500 ]]; then
+                error_pattern=$(echo "$error_pattern" | cut -c1-500 | sed 's/[[:space:]][^[:space:]]*$//')
+            fi
+            echo "$error_pattern"
+            return 0
+        fi
+    fi
+
+    # Final fallback: Look for error patterns directly in the file
+    local file_error
+    file_error=$(grep -iE '(error|failed|exception|cannot|not found):?' "$output_file" 2>/dev/null | head -1 | cut -c1-500)
+    if [[ -n "$file_error" ]]; then
+        echo "$file_error"
+        return 0
+    fi
+
+    echo "Task failed (no specific error message captured)"
+    return 0
+}
+
+# =============================================================================
 # Size Management Functions
 # =============================================================================
 
