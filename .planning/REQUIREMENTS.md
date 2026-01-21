@@ -71,20 +71,20 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| EXEC-01 | TBD | Pending |
-| EXEC-02 | TBD | Pending |
-| EXEC-03 | TBD | Pending |
-| EXEC-04 | TBD | Pending |
-| FAIL-01 | TBD | Pending |
-| FAIL-02 | TBD | Pending |
-| FAIL-03 | TBD | Pending |
-| FAIL-04 | TBD | Pending |
+| EXEC-01 | Phase 11 | Pending |
+| EXEC-02 | Phase 11 | Pending |
+| EXEC-03 | Phase 11 | Pending |
+| EXEC-04 | Phase 11 | Pending |
+| FAIL-01 | Phase 12 | Pending |
+| FAIL-02 | Phase 12 | Pending |
+| FAIL-03 | Phase 12 | Pending |
+| FAIL-04 | Phase 12 | Pending |
 
 **Coverage:**
 - v1.1 requirements: 8 total
-- Mapped to phases: 0
-- Unmapped: 8 (roadmap pending)
+- Mapped to phases: 8
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-19*
-*Last updated: 2026-01-20 after v1.1 milestone start*
+*Last updated: 2026-01-20 - v1.1 traceability complete*

@@ -12,6 +12,10 @@ GSD Lazy Mode transforms the existing interactive GSD workflow into a "fire and 
 
 Decimal phases appear between their surrounding integers in numeric order.
 
+---
+
+## v1.0 Phases (Complete)
+
 - [x] **Phase 1: Safety Foundation** - Hard iteration caps and fail-fast error handling to prevent runaway costs
 - [x] **Phase 2: State Extensions** - Extended STATE.md with iteration tracking and progress indicators
 - [x] **Phase 3: Outer Loop Core** - Bash script that spawns fresh Claude instances with retry logic
@@ -22,6 +26,15 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 8: Upfront Planning** - Generate all PLAN.md files before autonomous execution begins
 - [x] **Phase 9: Mode Selection & Base Commands** - Interactive vs Lazy mode selection at startup
 - [x] **Phase 10: Execution Commands** - Unified autopilot command for autonomous milestone execution
+
+---
+
+## v1.1 Phases
+
+- [ ] **Phase 11: Terminal Launcher** - Platform-aware terminal spawning for execution isolation
+- [ ] **Phase 12: Failure Learnings** - Extract, structure, and propagate failure context across retries
+
+---
 
 ## Phase Details
 
@@ -37,8 +50,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 2 plans
 
 Plans:
-- [x] 01-01-PLAN.md — Budget configuration infrastructure (prompting, persistence, display)
-- [x] 01-02-PLAN.md — Fail-fast error handling patterns (retry, checkpoint, rollback)
+- [x] 01-01-PLAN.md - Budget configuration infrastructure (prompting, persistence, display)
+- [x] 01-02-PLAN.md - Fail-fast error handling patterns (retry, checkpoint, rollback)
 
 ### Phase 2: State Extensions
 **Goal**: Track iteration state and show progress across autonomous execution
@@ -52,8 +65,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [x] 02-01-PLAN.md — STATE.md schema extensions and state.sh update library
-- [x] 02-02-PLAN.md — Progress bar generation and history rolling/archiving
+- [x] 02-01-PLAN.md - STATE.md schema extensions and state.sh update library
+- [x] 02-02-PLAN.md - Progress bar generation and history rolling/archiving
 
 ### Phase 3: Outer Loop Core
 **Goal**: Execute a bash-based retry loop that spawns fresh Claude instances
@@ -68,9 +81,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [x] 03-01-PLAN.md — ralph.sh script skeleton with iteration control and STATE.md parsing
-- [x] 03-02-PLAN.md — Claude CLI invocation with JSON output parsing and failure handling
-- [x] 03-03-PLAN.md — Cross-platform compatibility (line endings, NO_COLOR support)
+- [x] 03-01-PLAN.md - ralph.sh script skeleton with iteration control and STATE.md parsing
+- [x] 03-02-PLAN.md - Claude CLI invocation with JSON output parsing and failure handling
+- [x] 03-03-PLAN.md - Cross-platform compatibility (line endings, NO_COLOR support)
 
 ### Phase 4: Git Checkpointing
 **Goal**: Use atomic git commits as progress checkpoints
@@ -84,8 +97,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [x] 04-01-PLAN.md — Atomic commit integration (checkpoint.sh library, startup validation, commit after success)
-- [x] 04-02-PLAN.md — History recovery (extract last task from git, validate STATE.md vs git history)
+- [x] 04-01-PLAN.md - Atomic commit integration (checkpoint.sh library, startup validation, commit after success)
+- [x] 04-02-PLAN.md - History recovery (extract last task from git, validate STATE.md vs git history)
 
 ### Phase 5: Exit Conditions
 **Goal**: Determine when autonomous execution should stop
@@ -99,8 +112,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [x] 05-01-PLAN.md — Exit conditions library with stuck detection, interrupt handling, exit status logging
-- [x] 05-02-PLAN.md — Completion detection and dual-exit gate implementation
+- [x] 05-01-PLAN.md - Exit conditions library with stuck detection, interrupt handling, exit status logging
+- [x] 05-02-PLAN.md - Completion detection and dual-exit gate implementation
 
 ### Phase 6: Circuit Breaker & Recovery
 **Goal**: Intelligently handle repeated failures without burning tokens
@@ -114,8 +127,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [x] 06-01-PLAN.md — Circuit breaker pattern with cross-task failure tracking and pause menu
-- [x] 06-02-PLAN.md — Stuck analysis and alternative approach suggestions
+- [x] 06-01-PLAN.md - Circuit breaker pattern with cross-task failure tracking and pause menu
+- [x] 06-02-PLAN.md - Stuck analysis and alternative approach suggestions
 
 ### Phase 7: Learnings Propagation
 **Goal**: Share discovered patterns across iterations via AGENTS.md
@@ -129,8 +142,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [x] 07-01-PLAN.md — Learning extraction library (learnings.sh with init, get, append, extract, prune)
-- [x] 07-02-PLAN.md — AGENTS.md integration into invoke and ralph loop
+- [x] 07-01-PLAN.md - Learning extraction library (learnings.sh with init, get, append, extract, prune)
+- [x] 07-02-PLAN.md - AGENTS.md integration into invoke and ralph loop
 
 ### Phase 8: Upfront Planning
 **Goal**: Generate all PLAN.md files for all phases before autonomous execution
@@ -145,8 +158,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [x] 08-01-PLAN.md — Planning infrastructure (planning.sh library, state.sh/parse.sh extensions)
-- [x] 08-02-PLAN.md — plan-milestone-all command with orchestration and refinement loop
+- [x] 08-01-PLAN.md - Planning infrastructure (planning.sh library, state.sh/parse.sh extensions)
+- [x] 08-02-PLAN.md - plan-milestone-all command with orchestration and refinement loop
 
 ### Phase 9: Mode Selection & Base Commands
 **Goal**: Enable users to choose Interactive vs Lazy mode at startup
@@ -160,8 +173,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [x] 09-01-PLAN.md — Mode infrastructure (mode.sh library, budget.sh extension, lazy-mode.md command)
-- [x] 09-02-PLAN.md — Command updates (help.md mode labels, progress.md mode display, mode gating)
+- [x] 09-01-PLAN.md - Mode infrastructure (mode.sh library, budget.sh extension, lazy-mode.md command)
+- [x] 09-02-PLAN.md - Command updates (help.md mode labels, progress.md mode display, mode gating)
 
 ### Phase 10: Execution Commands
 **Goal**: Unified autopilot command for autonomous milestone execution
@@ -177,14 +190,50 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [x] 10-01-PLAN.md — Config extension and autopilot command skeleton
-- [x] 10-02-PLAN.md — Plan detection, resume detection, and execution orchestration
-- [x] 10-03-PLAN.md — Documentation updates (help.md, progress.md)
+- [x] 10-01-PLAN.md - Config extension and autopilot command skeleton
+- [x] 10-02-PLAN.md - Plan detection, resume detection, and execution orchestration
+- [x] 10-03-PLAN.md - Documentation updates (help.md, progress.md)
+
+---
+
+### Phase 11: Terminal Launcher
+**Goal**: Launch ralph.sh in a separate terminal window for execution isolation
+**Depends on**: Phase 10 (builds on autopilot command)
+**Requirements**: EXEC-01, EXEC-02, EXEC-03, EXEC-04
+**Success Criteria** (what must be TRUE):
+  1. User runs autopilot and ralph.sh launches in a new terminal window (not inline)
+  2. Terminal type is auto-detected based on platform (Windows: cmd/PowerShell/Git Bash, macOS: Terminal.app, Linux: gnome-terminal/xterm)
+  3. If no supported terminal is detected, autopilot displays manual run instructions instead of failing
+  4. Ralph.sh continues running independently after autopilot returns control to user
+  5. User can close the original Claude session without stopping ralph.sh execution
+**Plans**: TBD
+
+Plans:
+- [ ] 11-01-PLAN.md - TBD
+- [ ] 11-02-PLAN.md - TBD
+
+### Phase 12: Failure Learnings
+**Goal**: Capture and propagate failure context so retries learn from mistakes
+**Depends on**: Phase 7 (builds on learnings.sh infrastructure)
+**Requirements**: FAIL-01, FAIL-02, FAIL-03, FAIL-04
+**Success Criteria** (what must be TRUE):
+  1. When a task fails, the specific failure reason is extracted from Claude's output
+  2. Failure context is structured into learnings format (what failed, why, what was attempted)
+  3. Failure learnings appear in AGENTS.md under a "Failure Context" section
+  4. Next retry attempt receives failure learnings in its prompt, avoiding repeated mistakes
+  5. User can review accumulated failure learnings in AGENTS.md
+**Plans**: TBD
+
+Plans:
+- [ ] 12-01-PLAN.md - TBD
+- [ ] 12-02-PLAN.md - TBD
+
+---
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
+Phases execute in numeric order: 1 -> 2 -> ... -> 10 -> 11 -> 12
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -198,7 +247,10 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 8. Upfront Planning | 2/2 | Complete | 2026-01-19 |
 | 9. Mode Selection & Base Commands | 2/2 | Complete | 2026-01-20 |
 | 10. Execution Commands | 3/3 | Complete | 2026-01-20 |
+| 11. Terminal Launcher | 0/? | Pending | - |
+| 12. Failure Learnings | 0/? | Pending | - |
 
 ---
 *Roadmap created: 2026-01-19*
-*Depth: Comprehensive (10 phases, 22 planned plans)*
+*v1.1 phases added: 2026-01-20*
+*Depth: Comprehensive (12 phases total, 22 v1.0 plans + v1.1 TBD)*
