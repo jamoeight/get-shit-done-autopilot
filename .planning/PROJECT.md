@@ -2,7 +2,7 @@
 
 ## What This Is
 
-An extension to GSD that adds autonomous "fire and forget" milestone execution. Users plan everything upfront in one intensive session, then walk away while ralph.sh spawns fresh Claude instances to work through all phases until the milestone is complete.
+An extension to GSD that adds autonomous "fire and forget" milestone execution. Users plan everything upfront in one intensive session, then walk away while ralph.sh spawns fresh Claude instances in a separate terminal window to work through all phases until the milestone is complete. Failed tasks have their context extracted and propagated to retries for smarter recovery.
 
 ## Core Value
 
@@ -28,21 +28,13 @@ Plan once, walk away, wake up to done. No human needed at the computer after pla
 - ✓ Exit condition: all requirements met + all tests pass — v1.0
 - ✓ No human checkpoints during execution — v1.0
 - ✓ Progress persistence between ralph iterations (via git + state files) — v1.0
+- ✓ Auto-launch terminal for ralph.sh (execution isolation) — v1.1
+- ✓ Cross-platform terminal detection (Windows/macOS/Linux) — v1.1
+- ✓ Failure learnings propagation (extract failure context for retries) — v1.1
 
 ### Active
 
-- [ ] Auto-launch terminal for ralph.sh (execution isolation)
-- [ ] Cross-platform terminal detection (Windows/macOS/Linux)
-- [ ] Failure learnings propagation (extract failure context for retries)
-
-## Current Milestone: v1.1 Execution Isolation & Failure Learnings
-
-**Goal:** Prevent Claude from executing directly by auto-launching ralph.sh in a separate terminal, and improve retry intelligence by propagating failure learnings.
-
-**Target features:**
-- Auto-launch terminal window when /gsd:autopilot runs
-- Cross-platform terminal detection (cmd, PowerShell, Git Bash, Terminal.app, gnome-terminal, etc.)
-- Extract failure reasons from failed tasks and add structured context to AGENTS.md for retries
+(No active requirements — planning next milestone)
 
 ### Out of Scope
 
@@ -53,13 +45,17 @@ Plan once, walk away, wake up to done. No human needed at the computer after pla
 
 ## Context
 
-**Current State (v1.0 shipped):**
-- 12 bash libraries + ralph.sh main script
-- ~32,800 lines of code
-- 10 phases, 22 plans completed
-- Full audit passed: 22/22 requirements, 0 gaps
+**Current State (v1.1 shipped):**
+- 13 bash libraries + 1 Node.js module + ralph.sh main script
+- ~5,400 lines of executable code (bin/)
+- +37,000 lines total with planning/docs
+- 12 phases, 26 plans completed across 2 milestones
+- Full audit passed: 8/8 v1.1 requirements, 0 gaps
 
-**Known Issue:** Claude may execute plans directly instead of delegating to ralph.sh. Workaround: run `./bin/ralph.sh` manually in terminal. Fix planned for v1.1 (EXEC-01).
+**v1.1 additions:**
+- bin/lib/terminal-launcher.js (270 lines) — Cross-platform terminal spawning
+- bin/lib/learnings.sh extended (+239 lines) — Failure extraction and storage
+- AGENTS.md Failure Context section — Retry learning propagation
 
 ## Constraints
 
@@ -77,7 +73,13 @@ Plan once, walk away, wake up to done. No human needed at the computer after pla
 | Mode selection at startup | Clean separation, lazy mode has different command set | ✓ Good |
 | Fresh context per iteration (ralph pattern) | Prevents context degradation, inherited knowledge via state files | ✓ Good |
 | Autopilot as unified command | Consolidated /gsd:ralph and /gsd:run-milestone into single /gsd:autopilot | ✓ Good |
-| Learnings from successes only (v1.0) | Simpler implementation, failure learnings deferred to v1.1 | ⚠️ Revisit |
+| Learnings from successes only (v1.0) | Simpler implementation, failure learnings added in v1.1 | ✓ Good |
+| command-exists for terminal detection | Reliable cross-platform detection vs custom PATH scanning | ✓ Good |
+| Detached process spawning | subprocess.unref() enables true execution isolation | ✓ Good |
+| Manual fallback instructions | Graceful degradation when terminal detection fails | ✓ Good |
+| jq with grep/sed fallback | Universal compatibility — works with or without jq installed | ✓ Good |
+| Phase-scoped failure subsections | Enables selective cleanup without affecting other phases | ✓ Good |
+| 100-failure cap per phase | Prevents unbounded growth, drops oldest first | ✓ Good |
 
 ---
-*Last updated: 2026-01-20 after starting v1.1 milestone*
+*Last updated: 2026-01-21 after v1.1 milestone*

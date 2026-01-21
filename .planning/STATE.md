@@ -2,25 +2,25 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-01-20)
+See: .planning/PROJECT.md (updated 2026-01-21)
 
 **Core value:** Plan once, walk away, wake up to done.
-**Current focus:** v1.1 Execution Isolation & Failure Learnings
+**Current focus:** Planning next milestone
 
 ## Current Position
 
-Phase: 12 - Failure Learnings
-Plan: 12-02 of 2 (phase complete)
-Status: Phase complete
-Last activity: 2026-01-21 - Completed 12-02-PLAN.md
+Phase: 12 of 12 (v1.1 complete)
+Plan: Complete
+Status: Milestone shipped
+Last activity: 2026-01-21 - v1.1 milestone completed
 
-Progress: [██████████████████████████████] 100% (v1.1: 24/24 plans complete)
+Progress: [██████████████████████████████] 100% (12/12 phases, 26/26 plans)
 
 ## Next Action
 
-Command: None
-Description: Phase 12 complete - all v1.1 requirements satisfied
-Read: .planning/phases/12-failure-learnings/12-02-SUMMARY.md
+Command: /gsd:new-milestone
+Description: Start v2.0 planning (questioning → research → requirements → roadmap)
+Read: .planning/MILESTONES.md for what's next
 
 ## Milestone History
 
@@ -29,33 +29,12 @@ Read: .planning/phases/12-failure-learnings/12-02-SUMMARY.md
 | v1.0 | Lazy Mode MVP | 1-10 (22 plans) | 2026-01-20 |
 | v1.1 | Execution Isolation & Failure Learnings | 11-12 (4 plans) | 2026-01-21 |
 
-## v1.1 Phase Summary
-
-| Phase | Goal | Requirements | Status |
-|-------|------|--------------|--------|
-| 11 | Terminal Launcher | EXEC-01, EXEC-02, EXEC-03, EXEC-04 | Complete |
-| 12 | Failure Learnings | FAIL-01, FAIL-02, FAIL-03, FAIL-04 | Complete (2/2) |
-
 ## Decisions
 
-| Decision | Phase-Plan | Context | Impact |
-|----------|------------|---------|--------|
-| Use command-exists for terminal detection | 11-01 | Cross-platform terminal launcher | Reliable terminal emulator detection across platforms |
-| Prioritize Windows Terminal > cmd > PowerShell > Git Bash | 11-01 | Windows terminal selection | Quality over alphabetical ordering |
-| Implement manual fallback instructions | 11-01 | EXEC-03 requirement | Graceful degradation when detection fails |
-| Replace inline ralph.sh execution with terminal-launcher | 11-02 | Autopilot integration | Execution isolation - user can close Claude session after launch |
-| Autopilot returns immediately after launch | 11-02 | Process isolation pattern | No longer waits for ralph.sh completion |
-| Remove ralph.sh exit code handling from autopilot | 11-02 | Independent execution | Ralph.sh handles its own completion states in separate terminal |
-| Use jq for JSON parsing with grep/sed fallback | 12-01 | Failure extraction | Works on systems without jq installed |
-| Multi-line failure entry format | 12-01 | Failure storage | Full context for retries (task ID, timestamp, error, attempted, files, context) |
-| Phase-scoped subsections in Failure Context | 12-01 | Failure organization | Enables selective cleanup on phase completion |
-| 100-failure cap per phase | 12-01 | Resource management | Prevents unbounded growth, drops oldest first |
-| Failure context extraction before cleanup | 12-02 | Ralph integration | Preserve failure details by reading output_file before deletion |
-| Phase boundary detection via task ID parsing | 12-02 | Cleanup trigger | Reliable phase change detection from task IDs (e.g., 12-01 → 13-01) |
-| Clear failures on COMPLETE and phase transition | 12-02 | Fresh phase start | Ensure failures cleared whether all phases complete or just current phase |
+(Cleared on milestone completion — see PROJECT.md Key Decisions for full record)
 
 ## Session Continuity
 
 Last session: 2026-01-21
-Stopped at: Completed 12-02-PLAN.md (Phase 12 complete, v1.1 complete)
+Stopped at: v1.1 milestone completed
 Resume file: None
