@@ -13,6 +13,7 @@ const os = require('os');
 // When installed: ~/.claude/get-shit-done/bin/lib/terminal-launcher.js
 // ralph.sh is at: ~/.claude/get-shit-done/bin/ralph.sh
 const RALPH_SCRIPT = path.join(__dirname, '..', 'ralph.sh');
+const PROGRESS_WATCHER_SCRIPT = path.join(__dirname, 'progress-watcher.js');
 
 // Convert Windows path to Git Bash path (C:/Users/... → /c/Users/...)
 function toGitBashPath(windowsPath) {
@@ -38,18 +39,18 @@ try {
 // Order matters - first available terminal is used
 const TERMINAL_CONFIG = {
   win32: [
-    { name: 'wt.exe', launcher: launchWindowsTerminal },
-    { name: 'cmd.exe', launcher: launchCmd },
-    { name: 'powershell.exe', launcher: launchPowerShell },
-    { name: 'bash.exe', launcher: launchGitBash }
+    { name: 'wt.exe', launcher: launchWindowsTerminal, nodeLauncher: launchWindowsTerminalNode },
+    { name: 'cmd.exe', launcher: launchCmd, nodeLauncher: launchCmdNode },
+    { name: 'powershell.exe', launcher: launchPowerShell, nodeLauncher: launchPowerShellNode },
+    { name: 'bash.exe', launcher: launchGitBash, nodeLauncher: launchGitBashNode }
   ],
   darwin: [
-    { name: 'osascript', launcher: launchMacTerminal }
+    { name: 'osascript', launcher: launchMacTerminal, nodeLauncher: launchMacTerminalNode }
   ],
   linux: [
-    { name: 'gnome-terminal', launcher: launchGnomeTerminal },
-    { name: 'xterm', launcher: launchXterm },
-    { name: 'x-terminal-emulator', launcher: launchXtermEmulator }
+    { name: 'gnome-terminal', launcher: launchGnomeTerminal, nodeLauncher: launchGnomeTerminalNode },
+    { name: 'xterm', launcher: launchXterm, nodeLauncher: launchXtermNode },
+    { name: 'x-terminal-emulator', launcher: launchXtermEmulator, nodeLauncher: launchXtermEmulatorNode }
   ]
 };
 
@@ -69,13 +70,11 @@ function findTerminal(platform) {
   return null;
 }
 
-function launchCmd() {
+function launchCmd(scriptPath, windowTitle = 'GSD') {
   const cwd = process.cwd();
   const bashCwd = toGitBashPath(cwd);
-  // Use $HOME expansion inside bash to avoid Windows/Unix path issues
-  const scriptPath = '$HOME/.claude/get-shit-done/bin/ralph.sh';
 
-  return spawn('cmd.exe', ['/c', 'start', 'cmd', '/k', `bash -c "cd '${bashCwd}' && bash '${scriptPath}'"`], {
+  return spawn('cmd.exe', ['/c', 'start', windowTitle, 'cmd', '/k', `bash -c "cd '${bashCwd}' && bash '${scriptPath}'"`], {
     detached: true,
     stdio: 'ignore',
     cwd: cwd,
@@ -83,11 +82,21 @@ function launchCmd() {
   });
 }
 
-function launchPowerShell() {
+function launchCmdNode(scriptPath, windowTitle = 'GSD') {
   const cwd = process.cwd();
   const bashCwd = toGitBashPath(cwd);
-  // Use $HOME expansion inside bash to avoid Windows/Unix path issues
-  const scriptPath = '$HOME/.claude/get-shit-done/bin/ralph.sh';
+
+  return spawn('cmd.exe', ['/c', 'start', windowTitle, 'cmd', '/k', `bash -c "cd '${bashCwd}' && node '${scriptPath}' '${bashCwd}'"`], {
+    detached: true,
+    stdio: 'ignore',
+    cwd: cwd,
+    shell: false
+  });
+}
+
+function launchPowerShell(scriptPath, windowTitle = 'GSD') {
+  const cwd = process.cwd();
+  const bashCwd = toGitBashPath(cwd);
 
   return spawn('powershell.exe', [
     '-Command', 'Start-Process', 'powershell',
@@ -100,14 +109,27 @@ function launchPowerShell() {
   });
 }
 
-function launchWindowsTerminal() {
+function launchPowerShellNode(scriptPath, windowTitle = 'GSD') {
   const cwd = process.cwd();
   const bashCwd = toGitBashPath(cwd);
-  // Use $HOME expansion inside bash to avoid Windows/Unix path issues
-  const scriptPath = '$HOME/.claude/get-shit-done/bin/ralph.sh';
+
+  return spawn('powershell.exe', [
+    '-Command', 'Start-Process', 'powershell',
+    '-ArgumentList', `"-NoExit", "-Command", "cd '${cwd.replace(/'/g, "''")}'; bash -c 'cd \\"${bashCwd}\\" && node \\"${scriptPath}\\" \\"${bashCwd}\\"'"`
+  ], {
+    detached: true,
+    stdio: 'ignore',
+    cwd: cwd,
+    shell: false
+  });
+}
+
+function launchWindowsTerminal(scriptPath, windowTitle = 'GSD') {
+  const cwd = process.cwd();
+  const bashCwd = toGitBashPath(cwd);
 
   return spawn('wt.exe', [
-    '--title', 'GSD Ralph',
+    '--title', windowTitle,
     'bash', '-c', `cd "${bashCwd}" && bash "${scriptPath}"`
   ], {
     detached: true,
@@ -117,14 +139,27 @@ function launchWindowsTerminal() {
   });
 }
 
-function launchGitBash() {
+function launchWindowsTerminalNode(scriptPath, windowTitle = 'GSD') {
   const cwd = process.cwd();
   const bashCwd = toGitBashPath(cwd);
-  // Use $HOME expansion inside bash to avoid Windows/Unix path issues
-  const scriptPath = '$HOME/.claude/get-shit-done/bin/ralph.sh';
+
+  return spawn('wt.exe', [
+    '--title', windowTitle,
+    'bash', '-c', `cd "${bashCwd}" && node "${scriptPath}" "${bashCwd}"`
+  ], {
+    detached: true,
+    stdio: 'ignore',
+    cwd: cwd,
+    shell: false
+  });
+}
+
+function launchGitBash(scriptPath, windowTitle = 'GSD') {
+  const cwd = process.cwd();
+  const bashCwd = toGitBashPath(cwd);
 
   return spawn('cmd.exe', [
-    '/c', 'start', '""', 'bash', '--login', '-i', '-c',
+    '/c', 'start', windowTitle, 'bash', '--login', '-i', '-c',
     `cd "${bashCwd}" && bash "${scriptPath}"`
   ], {
     detached: true,
@@ -134,13 +169,27 @@ function launchGitBash() {
   });
 }
 
-function launchMacTerminal() {
+function launchGitBashNode(scriptPath, windowTitle = 'GSD') {
   const cwd = process.cwd();
-  const script = RALPH_SCRIPT;
+  const bashCwd = toGitBashPath(cwd);
+
+  return spawn('cmd.exe', [
+    '/c', 'start', windowTitle, 'bash', '--login', '-i', '-c',
+    `cd "${bashCwd}" && node "${scriptPath}" "${bashCwd}"`
+  ], {
+    detached: true,
+    stdio: 'ignore',
+    cwd: cwd,
+    shell: false
+  });
+}
+
+function launchMacTerminal(scriptPath, windowTitle = 'GSD') {
+  const cwd = process.cwd();
 
   // Escape for AppleScript
   const escapedCwd = cwd.replace(/"/g, '\\"');
-  const escapedScript = script.replace(/"/g, '\\"');
+  const escapedScript = scriptPath.replace(/"/g, '\\"');
 
   const appleScript = `tell application "Terminal"
     do script "cd \\"${escapedCwd}\\" && \\"${escapedScript}\\""
@@ -154,15 +203,33 @@ end tell`;
   });
 }
 
-function launchGnomeTerminal() {
+function launchMacTerminalNode(scriptPath, windowTitle = 'GSD') {
   const cwd = process.cwd();
-  const script = RALPH_SCRIPT;
+
+  // Escape for AppleScript
+  const escapedCwd = cwd.replace(/"/g, '\\"');
+  const escapedScript = scriptPath.replace(/"/g, '\\"');
+
+  const appleScript = `tell application "Terminal"
+    do script "cd \\"${escapedCwd}\\" && node \\"${escapedScript}\\" \\"${escapedCwd}\\""
+    activate
+end tell`;
+
+  return spawn('osascript', ['-e', appleScript], {
+    detached: true,
+    stdio: 'ignore',
+    cwd: cwd
+  });
+}
+
+function launchGnomeTerminal(scriptPath, windowTitle = 'GSD') {
+  const cwd = process.cwd();
 
   return spawn('gnome-terminal', [
     '--window',
-    '--title=GSD Ralph',
+    `--title=${windowTitle}`,
     '--',
-    'bash', '-c', `cd "${cwd}" && "${script}"; exec bash`
+    'bash', '-c', `cd "${cwd}" && "${scriptPath}"; exec bash`
   ], {
     detached: true,
     stdio: 'ignore',
@@ -170,14 +237,28 @@ function launchGnomeTerminal() {
   });
 }
 
-function launchXterm() {
+function launchGnomeTerminalNode(scriptPath, windowTitle = 'GSD') {
   const cwd = process.cwd();
-  const script = RALPH_SCRIPT;
+
+  return spawn('gnome-terminal', [
+    '--window',
+    `--title=${windowTitle}`,
+    '--',
+    'bash', '-c', `cd "${cwd}" && node "${scriptPath}" "${cwd}"; exec bash`
+  ], {
+    detached: true,
+    stdio: 'ignore',
+    cwd: cwd
+  });
+}
+
+function launchXterm(scriptPath, windowTitle = 'GSD') {
+  const cwd = process.cwd();
 
   return spawn('xterm', [
     '-hold',
-    '-title', 'GSD Ralph',
-    '-e', `cd "${cwd}" && "${script}"`
+    '-title', windowTitle,
+    '-e', `cd "${cwd}" && "${scriptPath}"`
   ], {
     detached: true,
     stdio: 'ignore',
@@ -185,10 +266,30 @@ function launchXterm() {
   });
 }
 
-function launchXtermEmulator() {
+function launchXtermNode(scriptPath, windowTitle = 'GSD') {
+  const cwd = process.cwd();
+
+  return spawn('xterm', [
+    '-hold',
+    '-title', windowTitle,
+    '-e', `cd "${cwd}" && node "${scriptPath}" "${cwd}"`
+  ], {
+    detached: true,
+    stdio: 'ignore',
+    cwd: cwd
+  });
+}
+
+function launchXtermEmulator(scriptPath, windowTitle = 'GSD') {
   // x-terminal-emulator is a Debian alternatives symlink
   // Use same approach as xterm
-  return launchXterm();
+  return launchXterm(scriptPath, windowTitle);
+}
+
+function launchXtermEmulatorNode(scriptPath, windowTitle = 'GSD') {
+  // x-terminal-emulator is a Debian alternatives symlink
+  // Use same approach as xterm
+  return launchXtermNode(scriptPath, windowTitle);
 }
 
 function showManualInstructions(platform) {
@@ -226,12 +327,51 @@ function showManualInstructions(platform) {
 }
 
 /**
+ * Launch progress watcher in a new terminal window
+ *
+ * @returns {Object} Result object with success/failure info
+ */
+function launchProgressWatcher() {
+  const platform = process.platform;
+  const terminal = findTerminal(platform);
+
+  if (!terminal || !terminal.nodeLauncher) {
+    // Silently skip if no terminal found - progress watcher is optional
+    return { success: false, reason: 'no_terminal_found' };
+  }
+
+  try {
+    // Use $HOME expansion for the installed location
+    const watcherPath = '$HOME/.claude/get-shit-done/bin/lib/progress-watcher.js';
+    const subprocess = terminal.nodeLauncher(watcherPath, 'GSD Progress');
+    subprocess.unref(); // Critical: allow parent to exit independently
+
+    console.log(`Launched progress watcher in new ${terminal.name} window`);
+
+    return {
+      success: true,
+      terminal: terminal.name,
+      pid: subprocess.pid
+    };
+  } catch (err) {
+    // Non-critical failure - just log and continue
+    console.log(`Note: Could not launch progress watcher (${err.message})`);
+    return {
+      success: false,
+      reason: 'launch_failed',
+      error: err.message
+    };
+  }
+}
+
+/**
  * Launch ralph.sh in a new terminal window
  *
  * @returns {Object} Result object with:
  *   - success: boolean - whether terminal was launched
  *   - terminal: string - terminal name used (if success)
  *   - pid: number - process ID (if success)
+ *   - watcherPid: number - progress watcher PID (if launched)
  *   - reason: string - failure reason (if !success)
  *   - error: string - error message (if launch failed)
  */
@@ -245,16 +385,23 @@ function launchTerminal() {
   }
 
   try {
-    const subprocess = terminal.launcher();
+    // Use $HOME expansion inside bash to avoid Windows/Unix path issues
+    const ralphPath = '$HOME/.claude/get-shit-done/bin/ralph.sh';
+    const subprocess = terminal.launcher(ralphPath, 'GSD Ralph');
     subprocess.unref(); // Critical: allow parent to exit independently
 
     console.log(`\nLaunched ralph.sh in new ${terminal.name} window`);
+
+    // Launch progress watcher in second terminal
+    const watcherResult = launchProgressWatcher();
+
     console.log('You can now close this Claude session - ralph.sh will continue running.\n');
 
     return {
       success: true,
       terminal: terminal.name,
-      pid: subprocess.pid
+      pid: subprocess.pid,
+      watcherPid: watcherResult.success ? watcherResult.pid : null
     };
   } catch (err) {
     console.error(`\nFailed to launch ${terminal.name}: ${err.message}\n`);
