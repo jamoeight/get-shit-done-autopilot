@@ -13,10 +13,10 @@ Requirements for v1.1 release. Each maps to roadmap phases.
 
 ### Execution Isolation
 
-- [ ] **EXEC-01**: Autopilot auto-launches a new terminal window instead of running ralph.sh inline
-- [ ] **EXEC-02**: Terminal launcher detects platform and uses appropriate terminal (cmd/PowerShell/Git Bash on Windows, Terminal.app on macOS, gnome-terminal/xterm on Linux)
-- [ ] **EXEC-03**: If terminal detection fails, autopilot falls back to displaying manual run instructions
-- [ ] **EXEC-04**: Ralph.sh runs in the spawned terminal as an independent process
+- [x] **EXEC-01**: Autopilot auto-launches a new terminal window instead of running ralph.sh inline
+- [x] **EXEC-02**: Terminal launcher detects platform and uses appropriate terminal (cmd/PowerShell/Git Bash on Windows, Terminal.app on macOS, gnome-terminal/xterm on Linux)
+- [x] **EXEC-03**: If terminal detection fails, autopilot falls back to displaying manual run instructions
+- [x] **EXEC-04**: Ralph.sh runs in the spawned terminal as an independent process
 
 ### Failure Learnings
 
@@ -71,10 +71,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| EXEC-01 | Phase 11 | Pending |
-| EXEC-02 | Phase 11 | Pending |
-| EXEC-03 | Phase 11 | Pending |
-| EXEC-04 | Phase 11 | Pending |
+| EXEC-01 | Phase 11 | Complete |
+| EXEC-02 | Phase 11 | Complete |
+| EXEC-03 | Phase 11 | Complete |
+| EXEC-04 | Phase 11 | Complete |
 | FAIL-01 | Phase 12 | Pending |
 | FAIL-02 | Phase 12 | Pending |
 | FAIL-03 | Phase 12 | Pending |
@@ -87,4 +87,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-19*
-*Last updated: 2026-01-20 - v1.1 traceability complete*
+*Last updated: 2026-01-21 - Phase 11 requirements complete*

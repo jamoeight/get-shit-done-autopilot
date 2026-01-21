@@ -31,7 +31,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 ## v1.1 Phases
 
-- [ ] **Phase 11: Terminal Launcher** - Platform-aware terminal spawning for execution isolation
+- [x] **Phase 11: Terminal Launcher** - Platform-aware terminal spawning for execution isolation
 - [ ] **Phase 12: Failure Learnings** - Extract, structure, and propagate failure context across retries
 
 ---
@@ -209,8 +209,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 11-01-PLAN.md — Terminal launcher module with platform detection and detached spawning
-- [ ] 11-02-PLAN.md — Autopilot integration and end-to-end verification
+- [x] 11-01-PLAN.md — Terminal launcher module with platform detection and detached spawning
+- [x] 11-02-PLAN.md — Autopilot integration and end-to-end verification
 
 ### Phase 12: Failure Learnings
 **Goal**: Capture and propagate failure context so retries learn from mistakes
@@ -247,7 +247,7 @@ Phases execute in numeric order: 1 -> 2 -> ... -> 10 -> 11 -> 12
 | 8. Upfront Planning | 2/2 | Complete | 2026-01-19 |
 | 9. Mode Selection & Base Commands | 2/2 | Complete | 2026-01-20 |
 | 10. Execution Commands | 3/3 | Complete | 2026-01-20 |
-| 11. Terminal Launcher | 0/2 | Pending | - |
+| 11. Terminal Launcher | 2/2 | Complete | 2026-01-21 |
 | 12. Failure Learnings | 0/? | Pending | - |
 
 ---
