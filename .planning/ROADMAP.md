@@ -222,11 +222,11 @@ Plans:
   3. Failure learnings appear in AGENTS.md under a "Failure Context" section
   4. Next retry attempt receives failure learnings in its prompt, avoiding repeated mistakes
   5. User can review accumulated failure learnings in AGENTS.md
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 12-01-PLAN.md - TBD
-- [ ] 12-02-PLAN.md - TBD
+- [ ] 12-01-PLAN.md — Failure extraction and storage functions in learnings.sh
+- [ ] 12-02-PLAN.md — Integration into ralph.sh execution loop
 
 ---
 
@@ -248,9 +248,9 @@ Phases execute in numeric order: 1 -> 2 -> ... -> 10 -> 11 -> 12
 | 9. Mode Selection & Base Commands | 2/2 | Complete | 2026-01-20 |
 | 10. Execution Commands | 3/3 | Complete | 2026-01-20 |
 | 11. Terminal Launcher | 2/2 | Complete | 2026-01-21 |
-| 12. Failure Learnings | 0/? | Pending | - |
+| 12. Failure Learnings | 0/2 | Pending | - |
 
 ---
 *Roadmap created: 2026-01-19*
 *v1.1 phases added: 2026-01-20*
-*Depth: Comprehensive (12 phases total, 22 v1.0 plans + v1.1 TBD)*
+*Depth: Comprehensive (12 phases total, 24 v1.0 plans + 2 v1.1 plans)*
