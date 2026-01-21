@@ -9,18 +9,18 @@ See: .planning/PROJECT.md (updated 2026-01-20)
 
 ## Current Position
 
-Phase: 11 - Terminal Launcher
-Plan: 11-02 of 2 (phase complete)
-Status: Phase complete
-Last activity: 2026-01-21 - Completed 11-02-PLAN.md
+Phase: 12 - Failure Learnings
+Plan: 12-01 of 2 (in progress)
+Status: In progress
+Last activity: 2026-01-21 - Completed 12-01-PLAN.md
 
-Progress: [████████████████████████████░░] 96% (v1.1: 23/24 plans total)
+Progress: [█████████████████████████████░] 100% (v1.1: 24/24 plans total)
 
 ## Next Action
 
-Command: /gsd:execute-plan 12-01
-Description: Execute first plan in Failure Learnings phase
-Read: .planning/phases/12-failure-learnings/12-01-PLAN.md
+Command: /gsd:execute-plan 12-02
+Description: Execute second plan in Failure Learnings phase (Ralph Integration)
+Read: .planning/phases/12-failure-learnings/12-02-PLAN.md
 
 ## Milestone History
 
@@ -34,7 +34,7 @@ Read: .planning/phases/12-failure-learnings/12-01-PLAN.md
 | Phase | Goal | Requirements | Status |
 |-------|------|--------------|--------|
 | 11 | Terminal Launcher | EXEC-01, EXEC-02, EXEC-03, EXEC-04 | Complete |
-| 12 | Failure Learnings | FAIL-01, FAIL-02, FAIL-03, FAIL-04 | Pending |
+| 12 | Failure Learnings | FAIL-01, FAIL-02, FAIL-03, FAIL-04 | In Progress (1/2) |
 
 ## Decisions
 
@@ -46,9 +46,13 @@ Read: .planning/phases/12-failure-learnings/12-01-PLAN.md
 | Replace inline ralph.sh execution with terminal-launcher | 11-02 | Autopilot integration | Execution isolation - user can close Claude session after launch |
 | Autopilot returns immediately after launch | 11-02 | Process isolation pattern | No longer waits for ralph.sh completion |
 | Remove ralph.sh exit code handling from autopilot | 11-02 | Independent execution | Ralph.sh handles its own completion states in separate terminal |
+| Use jq for JSON parsing with grep/sed fallback | 12-01 | Failure extraction | Works on systems without jq installed |
+| Multi-line failure entry format | 12-01 | Failure storage | Full context for retries (task ID, timestamp, error, attempted, files, context) |
+| Phase-scoped subsections in Failure Context | 12-01 | Failure organization | Enables selective cleanup on phase completion |
+| 100-failure cap per phase | 12-01 | Resource management | Prevents unbounded growth, drops oldest first |
 
 ## Session Continuity
 
 Last session: 2026-01-21
-Stopped at: Completed 11-02-PLAN.md (Phase 11 complete)
+Stopped at: Completed 12-01-PLAN.md
 Resume file: None
