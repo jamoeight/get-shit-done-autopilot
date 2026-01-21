@@ -71,9 +71,11 @@ function findTerminal(platform) {
 
 function launchCmd() {
   const cwd = process.cwd();
-  const script = toGitBashPath(RALPH_SCRIPT);
+  const bashCwd = toGitBashPath(cwd);
+  // Use $HOME expansion inside bash to avoid Windows/Unix path issues
+  const scriptPath = '$HOME/.claude/get-shit-done/bin/ralph.sh';
 
-  return spawn('cmd.exe', ['/c', 'start', 'cmd', '/k', `bash "${script}"`], {
+  return spawn('cmd.exe', ['/c', 'start', 'cmd', '/k', `bash -c "cd '${bashCwd}' && bash '${scriptPath}'"`], {
     detached: true,
     stdio: 'ignore',
     cwd: cwd,
@@ -83,12 +85,13 @@ function launchCmd() {
 
 function launchPowerShell() {
   const cwd = process.cwd();
-  const script = toGitBashPath(RALPH_SCRIPT);
   const bashCwd = toGitBashPath(cwd);
+  // Use $HOME expansion inside bash to avoid Windows/Unix path issues
+  const scriptPath = '$HOME/.claude/get-shit-done/bin/ralph.sh';
 
   return spawn('powershell.exe', [
     '-Command', 'Start-Process', 'powershell',
-    '-ArgumentList', `"-NoExit", "-Command", "cd '${cwd.replace(/'/g, "''")}'; bash '${script}'"`
+    '-ArgumentList', `"-NoExit", "-Command", "cd '${cwd.replace(/'/g, "''")}'; bash -c 'cd \\"${bashCwd}\\" && bash \\"${scriptPath}\\"'"`
   ], {
     detached: true,
     stdio: 'ignore',
@@ -99,11 +102,13 @@ function launchPowerShell() {
 
 function launchWindowsTerminal() {
   const cwd = process.cwd();
-  const script = toGitBashPath(RALPH_SCRIPT);
+  const bashCwd = toGitBashPath(cwd);
+  // Use $HOME expansion inside bash to avoid Windows/Unix path issues
+  const scriptPath = '$HOME/.claude/get-shit-done/bin/ralph.sh';
 
   return spawn('wt.exe', [
     '--title', 'GSD Ralph',
-    'bash', script
+    'bash', '-c', `cd "${bashCwd}" && bash "${scriptPath}"`
   ], {
     detached: true,
     stdio: 'ignore',
@@ -114,12 +119,13 @@ function launchWindowsTerminal() {
 
 function launchGitBash() {
   const cwd = process.cwd();
-  const script = toGitBashPath(RALPH_SCRIPT);
   const bashCwd = toGitBashPath(cwd);
+  // Use $HOME expansion inside bash to avoid Windows/Unix path issues
+  const scriptPath = '$HOME/.claude/get-shit-done/bin/ralph.sh';
 
   return spawn('cmd.exe', [
     '/c', 'start', '""', 'bash', '--login', '-i', '-c',
-    `cd "${bashCwd}" && bash "${script}"`
+    `cd "${bashCwd}" && bash "${scriptPath}"`
   ], {
     detached: true,
     stdio: 'ignore',
