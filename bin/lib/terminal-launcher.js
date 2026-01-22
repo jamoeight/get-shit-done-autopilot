@@ -58,8 +58,30 @@ let commandExistsSync;
 try {
   commandExistsSync = require('command-exists').sync;
 } catch (e) {
-  // Fallback if command-exists not installed
-  commandExistsSync = () => false;
+  // Fallback if command-exists not installed - use native detection
+  const { execSync } = require('child_process');
+  commandExistsSync = (command) => {
+    // On Windows, cmd.exe and powershell.exe always exist
+    if (process.platform === 'win32') {
+      if (command === 'cmd.exe' || command === 'powershell.exe') {
+        return true;
+      }
+      // For other commands, use 'where' to check PATH
+      try {
+        execSync(`where ${command}`, { stdio: 'ignore' });
+        return true;
+      } catch {
+        return false;
+      }
+    }
+    // On Unix, use 'which'
+    try {
+      execSync(`which ${command}`, { stdio: 'ignore' });
+      return true;
+    } catch {
+      return false;
+    }
+  };
 }
 
 // Terminal configurations by platform
