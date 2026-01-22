@@ -443,6 +443,50 @@ function launchTerminal() {
     // Resolve absolute path - each launcher handles its own path format conversion
     const ralphPath = path.join(os.homedir(), '.claude', 'get-shit-done', 'bin', 'ralph.sh');
     const subprocess = terminal.launcher(ralphPath, 'GSD Ralph');
+
+    // If launcher returns null (e.g., wt.exe when Git Bash not found), try next terminal
+    if (subprocess === null) {
+      // Find next available terminal after current one
+      const terminals = TERMINAL_CONFIG[platform] || [];
+      const currentIndex = terminals.findIndex(t => t.name === terminal.name);
+
+      for (let i = currentIndex + 1; i < terminals.length; i++) {
+        try {
+          if (commandExistsSync(terminals[i].name)) {
+            const fallbackSubprocess = terminals[i].launcher(ralphPath, 'GSD Ralph');
+            if (fallbackSubprocess !== null) {
+              fallbackSubprocess.unref();
+              console.log(`\nLaunched ralph.sh in new ${terminals[i].name} window (fallback from ${terminal.name})`);
+
+              // Launch progress watcher in second terminal
+              const watcherResult = launchProgressWatcher();
+
+              console.log('You can now close this Claude session - ralph.sh will continue running.\n');
+
+              return {
+                success: true,
+                terminal: terminals[i].name,
+                pid: fallbackSubprocess.pid,
+                watcherPid: watcherResult.success ? watcherResult.pid : null,
+                fallbackFrom: terminal.name
+              };
+            }
+          }
+        } catch (fallbackErr) {
+          continue;
+        }
+      }
+
+      // No fallback terminal worked
+      console.log(`\n${terminal.name} unavailable (Git Bash not found) and no fallback terminal available\n`);
+      showManualInstructions(platform);
+      return {
+        success: false,
+        reason: 'launcher_returned_null',
+        attemptedTerminal: terminal.name
+      };
+    }
+
     subprocess.unref(); // Critical: allow parent to exit independently
 
     console.log(`\nLaunched ralph.sh in new ${terminal.name} window`);
@@ -472,6 +516,7 @@ function launchTerminal() {
 module.exports = {
   launchTerminal,
   findTerminal,  // Exported for testing
+  findGitBash,   // Exported for testing
   showManualInstructions  // Exported for direct use if needed
 };
 
