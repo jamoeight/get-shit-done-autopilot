@@ -240,6 +240,7 @@ update_next_action() {
 # Args: iteration_num, outcome (SUCCESS/FAILURE/RETRY/SKIPPED), task_name
 # Returns: 0 on success, 1 on failure
 # Prepends new entry (newest first), preserves table header and markers
+# Creates Iteration History section if it doesn't exist
 add_iteration_entry() {
     local iteration_num="$1"
     local outcome="$2"
@@ -253,6 +254,11 @@ add_iteration_entry() {
     if [[ ! -f "$STATE_FILE" ]]; then
         echo -e "${STATE_RED}Error: STATE_FILE not found: $STATE_FILE${STATE_RESET}" >&2
         return 1
+    fi
+
+    # Check if history markers exist, create section if missing
+    if ! grep -q "<!-- HISTORY_START -->" "$STATE_FILE" 2>/dev/null; then
+        _init_iteration_history_section
     fi
 
     local timestamp
@@ -280,6 +286,52 @@ $existing_entries"
 
     # Update the section between markers
     update_section "$STATE_FILE" "<!-- HISTORY_START -->" "<!-- HISTORY_END -->" "$new_history"
+    return $?
+}
+
+# _init_iteration_history_section - Create Iteration History section if missing
+# Returns: 0 on success, 1 on failure
+# Inserts section before ## Session Continuity (or appends to end)
+_init_iteration_history_section() {
+    if [[ ! -f "$STATE_FILE" ]]; then
+        return 1
+    fi
+
+    # Create temp file
+    local temp
+    temp=$(mktemp)
+
+    # Insert Iteration History section before ## Session Continuity
+    # If that section doesn't exist, append to end of file
+    if grep -q "^## Session Continuity" "$STATE_FILE" 2>/dev/null; then
+        awk '
+            /^## Session Continuity/ {
+                print "## Iteration History"
+                print ""
+                print "<!-- HISTORY_START -->"
+                print "| # | Timestamp | Outcome | Task |"
+                print "|---|-----------|---------|------|"
+                print "<!-- HISTORY_END -->"
+                print ""
+            }
+            { print }
+        ' "$STATE_FILE" > "$temp"
+    else
+        # Append to end of file
+        cp "$STATE_FILE" "$temp"
+        {
+            echo ""
+            echo "## Iteration History"
+            echo ""
+            echo "<!-- HISTORY_START -->"
+            echo "| # | Timestamp | Outcome | Task |"
+            echo "|---|-----------|---------|------|"
+            echo "<!-- HISTORY_END -->"
+        } >> "$temp"
+    fi
+
+    # Atomic replace
+    mv "$temp" "$STATE_FILE"
     return $?
 }
 
