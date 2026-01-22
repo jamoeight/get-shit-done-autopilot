@@ -26,16 +26,6 @@ function toGitBashPath(windowsPath) {
   return normalized;
 }
 
-// Convert Git Bash path back to Windows path (/c/Users/... → C:/Users/...)
-function toWindowsPath(gitBashPath) {
-  // Match Git Bash drive pattern like /c/ or /d/
-  const match = gitBashPath.match(/^\/([a-zA-Z])\//);
-  if (match) {
-    return match[1].toUpperCase() + ':' + gitBashPath.slice(2);
-  }
-  return gitBashPath;
-}
-
 // command-exists for checking terminal availability
 let commandExistsSync;
 try {
@@ -82,9 +72,11 @@ function findTerminal(platform) {
 
 function launchCmd(scriptPath, windowTitle = 'GSD') {
   const cwd = process.cwd();
+  // cmd.exe spawns Git Bash which needs /c/Users/... format
   const bashCwd = toGitBashPath(cwd);
+  const bashScript = toGitBashPath(scriptPath);
 
-  return spawn('cmd.exe', ['/c', 'start', windowTitle, 'cmd', '/k', `bash -c "cd '${bashCwd}' && bash '${scriptPath}'"`], {
+  return spawn('cmd.exe', ['/c', 'start', windowTitle, 'cmd', '/k', `bash -c "cd '${bashCwd}' && bash '${bashScript}'"`], {
     detached: true,
     stdio: 'ignore',
     cwd: cwd,
@@ -94,9 +86,11 @@ function launchCmd(scriptPath, windowTitle = 'GSD') {
 
 function launchCmdNode(scriptPath, windowTitle = 'GSD') {
   const cwd = process.cwd();
+  // cmd.exe spawns Git Bash which needs /c/Users/... format
   const bashCwd = toGitBashPath(cwd);
+  const bashScript = toGitBashPath(scriptPath);
 
-  return spawn('cmd.exe', ['/c', 'start', windowTitle, 'cmd', '/k', `bash -c "cd '${bashCwd}' && node '${scriptPath}' '${bashCwd}'"`], {
+  return spawn('cmd.exe', ['/c', 'start', windowTitle, 'cmd', '/k', `bash -c "cd '${bashCwd}' && node '${bashScript}' '${bashCwd}'"`], {
     detached: true,
     stdio: 'ignore',
     cwd: cwd,
@@ -106,11 +100,13 @@ function launchCmdNode(scriptPath, windowTitle = 'GSD') {
 
 function launchPowerShell(scriptPath, windowTitle = 'GSD') {
   const cwd = process.cwd();
+  // PowerShell spawns Git Bash which needs /c/Users/... format
   const bashCwd = toGitBashPath(cwd);
+  const bashScript = toGitBashPath(scriptPath);
 
   return spawn('powershell.exe', [
     '-Command', 'Start-Process', 'powershell',
-    '-ArgumentList', `"-NoExit", "-Command", "cd '${cwd.replace(/'/g, "''")}'; bash -c 'cd \\"${bashCwd}\\" && bash \\"${scriptPath}\\"'"`
+    '-ArgumentList', `"-NoExit", "-Command", "cd '${cwd.replace(/'/g, "''")}'; bash -c 'cd \\"${bashCwd}\\" && bash \\"${bashScript}\\"'"`
   ], {
     detached: true,
     stdio: 'ignore',
@@ -121,11 +117,13 @@ function launchPowerShell(scriptPath, windowTitle = 'GSD') {
 
 function launchPowerShellNode(scriptPath, windowTitle = 'GSD') {
   const cwd = process.cwd();
+  // PowerShell spawns Git Bash which needs /c/Users/... format
   const bashCwd = toGitBashPath(cwd);
+  const bashScript = toGitBashPath(scriptPath);
 
   return spawn('powershell.exe', [
     '-Command', 'Start-Process', 'powershell',
-    '-ArgumentList', `"-NoExit", "-Command", "cd '${cwd.replace(/'/g, "''")}'; bash -c 'cd \\"${bashCwd}\\" && node \\"${scriptPath}\\" \\"${bashCwd}\\"'"`
+    '-ArgumentList', `"-NoExit", "-Command", "cd '${cwd.replace(/'/g, "''")}'; bash -c 'cd \\"${bashCwd}\\" && node \\"${bashScript}\\" \\"${bashCwd}\\"'"`
   ], {
     detached: true,
     stdio: 'ignore',
@@ -136,9 +134,8 @@ function launchPowerShellNode(scriptPath, windowTitle = 'GSD') {
 
 function launchWindowsTerminal(scriptPath, windowTitle = 'GSD') {
   const cwd = process.cwd();
-  // Convert to Windows path format - wt.exe spawns WSL/native bash, not Git Bash
-  // Both WSL bash and native bash understand Windows paths
-  const winScript = toWindowsPath(scriptPath);
+  // wt.exe spawns WSL/native bash which understands Windows paths with forward slashes
+  const winScript = scriptPath.replace(/\\/g, '/');
 
   return spawn('wt.exe', [
     '--title', windowTitle,
@@ -154,8 +151,8 @@ function launchWindowsTerminal(scriptPath, windowTitle = 'GSD') {
 
 function launchWindowsTerminalNode(scriptPath, windowTitle = 'GSD') {
   const cwd = process.cwd();
-  // Convert to Windows path format - wt.exe spawns WSL/native bash, not Git Bash
-  const winScript = toWindowsPath(scriptPath);
+  // wt.exe spawns WSL/native bash which understands Windows paths with forward slashes
+  const winScript = scriptPath.replace(/\\/g, '/');
   const winCwd = cwd.replace(/\\/g, '/');
 
   return spawn('wt.exe', [
@@ -172,11 +169,13 @@ function launchWindowsTerminalNode(scriptPath, windowTitle = 'GSD') {
 
 function launchGitBash(scriptPath, windowTitle = 'GSD') {
   const cwd = process.cwd();
+  // Git Bash needs /c/Users/... format
   const bashCwd = toGitBashPath(cwd);
+  const bashScript = toGitBashPath(scriptPath);
 
   return spawn('cmd.exe', [
     '/c', 'start', windowTitle, 'bash', '--login', '-i', '-c',
-    `cd "${bashCwd}" && bash "${scriptPath}"`
+    `cd "${bashCwd}" && bash "${bashScript}"`
   ], {
     detached: true,
     stdio: 'ignore',
@@ -187,11 +186,13 @@ function launchGitBash(scriptPath, windowTitle = 'GSD') {
 
 function launchGitBashNode(scriptPath, windowTitle = 'GSD') {
   const cwd = process.cwd();
+  // Git Bash needs /c/Users/... format
   const bashCwd = toGitBashPath(cwd);
+  const bashScript = toGitBashPath(scriptPath);
 
   return spawn('cmd.exe', [
     '/c', 'start', windowTitle, 'bash', '--login', '-i', '-c',
-    `cd "${bashCwd}" && node "${scriptPath}" "${bashCwd}"`
+    `cd "${bashCwd}" && node "${bashScript}" "${bashCwd}"`
   ], {
     detached: true,
     stdio: 'ignore',
@@ -357,9 +358,8 @@ function launchProgressWatcher() {
   }
 
   try {
-    // Resolve absolute path, then convert to Git Bash format on Windows
-    const watcherPathAbs = path.join(os.homedir(), '.claude', 'get-shit-done', 'bin', 'lib', 'progress-watcher.js');
-    const watcherPath = process.platform === 'win32' ? toGitBashPath(watcherPathAbs) : watcherPathAbs;
+    // Resolve absolute path - each launcher handles its own path format conversion
+    const watcherPath = path.join(os.homedir(), '.claude', 'get-shit-done', 'bin', 'lib', 'progress-watcher.js');
     const subprocess = terminal.nodeLauncher(watcherPath, 'GSD Progress');
     subprocess.unref(); // Critical: allow parent to exit independently
 
@@ -402,9 +402,8 @@ function launchTerminal() {
   }
 
   try {
-    // Resolve absolute path, then convert to Git Bash format on Windows
-    const ralphPathAbs = path.join(os.homedir(), '.claude', 'get-shit-done', 'bin', 'ralph.sh');
-    const ralphPath = process.platform === 'win32' ? toGitBashPath(ralphPathAbs) : ralphPathAbs;
+    // Resolve absolute path - each launcher handles its own path format conversion
+    const ralphPath = path.join(os.homedir(), '.claude', 'get-shit-done', 'bin', 'ralph.sh');
     const subprocess = terminal.launcher(ralphPath, 'GSD Ralph');
     subprocess.unref(); // Critical: allow parent to exit independently
 
