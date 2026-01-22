@@ -10,9 +10,13 @@
 
 ### Phase 13: Terminal Path Resolution Fix
 **Goal:** Autopilot works on Windows regardless of terminal configuration
-**Status:** Pending
+**Status:** Planned
 **Depends on:** None (standalone bug fix)
-**Plans:** TBD (plan-phase will determine, likely 2-3)
+**Plans:** 2 plans
+
+Plans:
+- [ ] 13-01-PLAN.md — Terminal launcher hardening (findGitBash, cmd.exe fallback)
+- [ ] 13-02-PLAN.md — Runtime path resolution (detect_bash_env, resolve_win_path)
 
 **Requirements:**
 - TERM-01: wt.exe launcher checks Git Bash existence before attempting launch
@@ -36,9 +40,9 @@
 - Natural delivery boundary: either path resolution works or it doesn't
 - No dependencies between requirements that would require phasing
 
-**Implementation split (anticipated by plan-phase):**
-- Plan A: Terminal launcher hardening (TERM-01, TERM-02, TERM-03, ERR-01, ERR-02) - Node.js
-- Plan B: Runtime path resolution (PATH-01, PATH-02, PATH-03) - Bash
+**Implementation split:**
+- Plan 01: Terminal launcher hardening (TERM-01, TERM-02, TERM-03, ERR-01, ERR-02) - Node.js
+- Plan 02: Runtime path resolution (PATH-01, PATH-02, PATH-03) - Bash
 
 ---
 
@@ -54,22 +58,23 @@
 
 ## Traceability
 
-| Requirement | Phase | Status |
-|-------------|-------|--------|
-| TERM-01 | Phase 13 | Pending |
-| TERM-02 | Phase 13 | Pending |
-| TERM-03 | Phase 13 | Pending |
-| PATH-01 | Phase 13 | Pending |
-| PATH-02 | Phase 13 | Pending |
-| PATH-03 | Phase 13 | Pending |
-| ERR-01 | Phase 13 | Pending |
-| ERR-02 | Phase 13 | Pending |
+| Requirement | Phase | Plan | Status |
+|-------------|-------|------|--------|
+| TERM-01 | Phase 13 | 13-01 | Pending |
+| TERM-02 | Phase 13 | 13-01 | Pending |
+| TERM-03 | Phase 13 | 13-01 | Pending |
+| PATH-01 | Phase 13 | 13-02 | Pending |
+| PATH-02 | Phase 13 | 13-02 | Pending |
+| PATH-03 | Phase 13 | 13-02 | Pending |
+| ERR-01 | Phase 13 | 13-01 | Pending |
+| ERR-02 | Phase 13 | 13-01 | Pending |
 
 **Coverage:**
 - v1.2 requirements: 8 total
-- Mapped to phases: 8
+- Mapped to plans: 8
 - Unmapped: 0
 
 ---
 *Created: 2026-01-21*
 *Milestone: v1.2 Terminal Path Resolution*
+*Plans created: 2026-01-21*
