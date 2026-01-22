@@ -113,6 +113,10 @@ function formatStatus(status) {
     return `${COLORS.RED}✗ ${status}${COLORS.RESET}`;
   } else if (upper === 'RETRY') {
     return `${COLORS.YELLOW}⟳ ${status}${COLORS.RESET}`;
+  } else if (upper === 'RUNNING') {
+    return `${COLORS.CYAN}▸ ${status}${COLORS.RESET}`;
+  } else if (upper === 'SKIPPED') {
+    return `${COLORS.YELLOW}⊘ ${status}${COLORS.RESET}`;
   } else {
     return status;
   }
@@ -154,12 +158,27 @@ function displayProgress(stateFile, logFile, isPaused) {
     console.log(`${COLORS.DIM}Waiting for STATE.md...${COLORS.RESET}\n`);
   }
 
-  // Read and display ralph.log (last 5 iterations)
+  // Read and display ralph.log
   if (fs.existsSync(logFile)) {
     try {
       const logContent = fs.readFileSync(logFile, 'utf8');
       const entries = parseRalphLog(logContent);
-      const recentEntries = entries.slice(-5); // Last 5 iterations
+
+      // Check if last entry is RUNNING (active task)
+      const lastEntry = entries[entries.length - 1];
+      if (lastEntry && lastEntry.status && lastEntry.status.toUpperCase() === 'RUNNING') {
+        // Show prominent "Currently Running" section
+        const elapsed = Math.floor((Date.now() - new Date(lastEntry.timestamp).getTime()) / 1000);
+        const elapsedStr = elapsed > 60 ? `${Math.floor(elapsed/60)}m ${elapsed%60}s` : `${elapsed}s`;
+        console.log(`${COLORS.BOLD}${COLORS.CYAN}▸ Currently Running:${COLORS.RESET}`);
+        console.log(`  ${COLORS.BOLD}Task ${lastEntry.task}${COLORS.RESET} (iteration #${lastEntry.iteration})`);
+        console.log(`  ${COLORS.DIM}Elapsed: ${elapsedStr}${COLORS.RESET}`);
+        console.log();
+      }
+
+      // Show recent completed iterations (exclude current RUNNING)
+      const completedEntries = entries.filter(e => e.status && e.status.toUpperCase() !== 'RUNNING');
+      const recentEntries = completedEntries.slice(-5); // Last 5 completed
 
       if (recentEntries.length > 0) {
         console.log(`${COLORS.BOLD}Recent Iterations:${COLORS.RESET}`);
@@ -170,7 +189,7 @@ function displayProgress(stateFile, logFile, isPaused) {
           if (entry.summary) {
             console.log(`      ${entry.summary}`);
           }
-          if (entry.duration) {
+          if (entry.duration && entry.duration !== '-') {
             console.log(`      ${COLORS.DIM}Duration: ${entry.duration}${COLORS.RESET}`);
           }
           console.log();
@@ -281,13 +300,37 @@ function watchProgress(projectRoot) {
   process.on('SIGINT', cleanup);
   process.on('SIGTERM', cleanup);
 
-  // Keep process alive
-  setInterval(() => {
-    // Refresh display every 10 seconds even without file changes
-    // Also check if pause file state changed
-    isPaused = fs.existsSync(pauseFile);
-    displayProgress(stateFile, logFile, isPaused);
-  }, 10000);
+  // Keep process alive with adaptive refresh rate
+  // Faster refresh (2s) when task running, slower (10s) otherwise
+  let refreshInterval = null;
+
+  const scheduleRefresh = () => {
+    // Check if a task is currently running
+    let isRunning = false;
+    if (fs.existsSync(logFile)) {
+      try {
+        const content = fs.readFileSync(logFile, 'utf8');
+        const blocks = content.split('---\n').filter(b => b.trim());
+        if (blocks.length > 0) {
+          const lastBlock = blocks[blocks.length - 1];
+          isRunning = lastBlock.includes('Status: RUNNING');
+        }
+      } catch (e) { /* ignore */ }
+    }
+
+    // Clear existing interval
+    if (refreshInterval) clearInterval(refreshInterval);
+
+    // Set new interval based on state
+    const interval = isRunning ? 2000 : 10000;
+    refreshInterval = setInterval(() => {
+      isPaused = fs.existsSync(pauseFile);
+      displayProgress(stateFile, logFile, isPaused);
+      scheduleRefresh(); // Re-check and adjust interval
+    }, interval);
+  };
+
+  scheduleRefresh();
 }
 
 // CLI

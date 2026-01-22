@@ -21,6 +21,8 @@ Provides situational awareness before continuing work.
 <step name="verify">
 **Verify planning structure exists:**
 
+Output: `Checking project structure...`
+
 Use Bash (not Glob) to check—Glob respects .gitignore but .planning/ is often gitignored:
 
 ```bash
@@ -49,23 +51,33 @@ If missing both ROADMAP.md and PROJECT.md: suggest `/gsd:new-project`.
 <step name="load">
 **Load full project context:**
 
+Output: `Loading project context...`
+
 - Read `.planning/STATE.md` for living memory (position, decisions, issues)
 - Read `.planning/ROADMAP.md` for phase structure and objectives
 - Read `.planning/PROJECT.md` for current state (What This Is, Core Value, Requirements)
 - Read `.planning/.ralph-config` for GSD_MODE (if exists)
 - Read `.planning/config.json` for settings (model_profile, workflow toggles)
+
+Output: `✓ Loaded STATE.md, ROADMAP.md, PROJECT.md`
   </step>
 
 <step name="recent">
 **Gather recent work context:**
 
+Output: `Scanning recent summaries...`
+
 - Find the 2-3 most recent SUMMARY.md files
 - Extract from each: what was accomplished, key decisions, any issues logged
 - This shows "what we've been working on"
+
+Output: `✓ Found {N} recent summaries`
   </step>
 
 <step name="position">
 **Parse current position:**
+
+Output: `Calculating position...`
 
 - From STATE.md: current phase, plan number, status
 - Calculate: total plans, completed plans, remaining plans
@@ -73,10 +85,14 @@ If missing both ROADMAP.md and PROJECT.md: suggest `/gsd:new-project`.
 - Check for CONTEXT.md: For phases without PLAN.md files, check if `{phase}-CONTEXT.md` exists in phase directory
 - Count pending todos: `ls .planning/todos/pending/*.md 2>/dev/null | wc -l`
 - Check for active debug sessions: `ls .planning/debug/*.md 2>/dev/null | grep -v resolved | wc -l`
+
+Output: `✓ Phase {X}/{Y}, {N} plans in current phase`
   </step>
 
 <step name="report">
 **Present rich status report:**
+
+Output: `Building status report...`
 
 ```
 # [Project Name]
@@ -118,6 +134,8 @@ CONTEXT: [✓ if CONTEXT.md exists | - if not]
 
 <step name="route">
 **Determine next action based on verified counts.**
+
+Output: `Determining next action...`
 
 **Step 1: Count plans, summaries, and issues in current phase**
 
@@ -308,6 +326,8 @@ State: "Current phase is {X}. Milestone has {N} phases (highest: {Y})."
 |-----------|---------|--------|
 | current phase < highest phase | More phases remain | Go to **Route C** |
 | current phase = highest phase | Milestone complete | Go to **Route D** |
+
+Output: `✓ Route determined`
 
 ---
 

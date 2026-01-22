@@ -70,6 +70,34 @@ log_iteration() {
     } >> "$LOG_FILE"
 }
 
+# log_task_start - Log when a task begins execution
+# Args: iteration, task
+log_task_start() {
+    local iteration_num="$1"
+    local task="$2"
+
+    local timestamp
+    timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+
+    # Ensure log file directory exists
+    local log_dir
+    log_dir=$(dirname "$LOG_FILE")
+    if [[ ! -d "$log_dir" ]]; then
+        mkdir -p "$log_dir"
+    fi
+
+    # Append start entry to log file
+    {
+        echo "---"
+        echo "Iteration: $iteration_num"
+        echo "Timestamp: $timestamp"
+        echo "Task: $task"
+        echo "Status: RUNNING"
+        echo "Duration: -"
+        echo "Summary: Executing plan..."
+    } >> "$LOG_FILE"
+}
+
 # handle_iteration_success - Process successful iteration
 # Args: iteration, task, summary, duration
 # Updates STATE.md and advances to next plan
@@ -363,6 +391,9 @@ while true; do
 
     # Record iteration start time
     iteration_start=$(date +%s)
+
+    # Log task start for progress watcher visibility
+    log_task_start "$iteration" "$next_task"
 
     # Show running indicator with spinner
     start_spinner "[$iteration/$MAX_ITERATIONS] Running ${next_task}..."
