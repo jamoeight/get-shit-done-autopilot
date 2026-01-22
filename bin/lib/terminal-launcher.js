@@ -8,6 +8,7 @@
 const { spawn } = require('child_process');
 const path = require('path');
 const os = require('os');
+const fs = require('fs');
 
 // Get the installed ralph.sh location (relative to this file)
 // When installed: ~/.claude/get-shit-done/bin/lib/terminal-launcher.js
@@ -24,6 +25,32 @@ function toGitBashPath(windowsPath) {
     return '/' + match[1].toLowerCase() + normalized.slice(2);
   }
   return normalized;
+}
+
+// Common Git Bash installation locations (order: most common first)
+const GIT_BASH_CANDIDATES = [
+  'C:\\Program Files\\Git\\bin\\bash.exe',           // Standard 64-bit
+  'C:\\Program Files (x86)\\Git\\bin\\bash.exe',     // Standard 32-bit
+  'C:\\Git\\bin\\bash.exe',                          // Custom root install
+  path.join(process.env.USERPROFILE || '', 'scoop', 'apps', 'git', 'current', 'bin', 'bash.exe'), // Scoop user
+  'C:\\ProgramData\\scoop\\apps\\git\\current\\bin\\bash.exe'  // Scoop global
+];
+
+/**
+ * Find Git Bash executable by checking multiple candidate locations
+ * @returns {string|null} Path to bash.exe if found, null otherwise
+ */
+function findGitBash() {
+  for (const candidate of GIT_BASH_CANDIDATES) {
+    try {
+      if (fs.existsSync(candidate)) {
+        return candidate;
+      }
+    } catch (e) {
+      continue;
+    }
+  }
+  return null;
 }
 
 // command-exists for checking terminal availability
