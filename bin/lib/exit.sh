@@ -320,11 +320,13 @@ parse_test_results() {
 
     # Count failures (various frameworks)
     local fail_count
-    fail_count=$(grep -ciE '(FAIL|ERROR|FAILED)' "$output_file" 2>/dev/null || echo "0")
+    fail_count=$(grep -ciE '(FAIL|ERROR|FAILED)' "$output_file" 2>/dev/null) || true
+    fail_count="${fail_count%%$'\n'*}"; fail_count="${fail_count//[^0-9]/}"; fail_count="${fail_count:-0}"
 
     # Count passes (various frameworks)
     local pass_count
-    pass_count=$(grep -ciE '(PASS|OK|PASSED|SUCCESS)' "$output_file" 2>/dev/null || echo "0")
+    pass_count=$(grep -ciE '(PASS|OK|PASSED|SUCCESS)' "$output_file" 2>/dev/null) || true
+    pass_count="${pass_count%%$'\n'*}"; pass_count="${pass_count//[^0-9]/}"; pass_count="${pass_count:-0}"
 
     if [[ $fail_count -eq 0 && $pass_count -gt 0 ]]; then
         echo "TESTS_PASS"
@@ -362,7 +364,8 @@ check_all_plans_complete() {
 
     # Count uncompleted plans: - [ ] NN-MM-PLAN.md
     local incomplete
-    incomplete=$(grep -cE '^\s*- \[ \] [0-9]{2}-[0-9]{2}-PLAN\.md' "$roadmap" 2>/dev/null || echo "0")
+    incomplete=$(grep -cE '^\s*- \[ \] [0-9]{2}-[0-9]{2}-PLAN\.md' "$roadmap" 2>/dev/null) || true
+    incomplete="${incomplete%%$'\n'*}"; incomplete="${incomplete//[^0-9]/}"; incomplete="${incomplete:-0}"
 
     if [[ $incomplete -eq 0 ]]; then
         return 0  # All complete

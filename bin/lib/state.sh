@@ -557,10 +557,12 @@ get_plans_completed() {
 
     # Count lines matching "- [x]" pattern (completed plans)
     local count
-    count=$(grep -c '^\- \[x\]' "$roadmap" 2>/dev/null || echo "0")
+    count=$(grep -c '^\- \[x\]' "$roadmap" 2>/dev/null) || true
 
-    # Trim whitespace
-    count=$(echo "$count" | tr -d ' ')
+    # Ensure count is a valid number (grep exits 1 on no matches)
+    count="${count%%$'\n'*}"  # Take only first line
+    count="${count//[^0-9]/}" # Remove non-digits
+    count="${count:-0}"
 
     echo "$count"
     return 0
@@ -579,10 +581,12 @@ get_total_plans() {
 
     # Count lines matching "- [ ]" or "- [x]" pattern (all plans)
     local count
-    count=$(grep -cE '^\- \[(x| )\]' "$roadmap" 2>/dev/null || echo "0")
+    count=$(grep -cE '^\- \[(x| )\]' "$roadmap" 2>/dev/null) || true
 
-    # Trim whitespace
-    count=$(echo "$count" | tr -d ' ')
+    # Ensure count is a valid number (grep exits 1 on no matches)
+    count="${count%%$'\n'*}"  # Take only first line
+    count="${count//[^0-9]/}" # Remove non-digits
+    count="${count:-0}"
 
     echo "$count"
     return 0

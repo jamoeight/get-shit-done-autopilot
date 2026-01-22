@@ -649,9 +649,8 @@ enforce_failure_cap() {
 
     # Count failures for this phase
     local count
-    count=$(grep -c "^- \[${phase_num}-" "$AGENTS_FILE" 2>/dev/null || echo "0")
-    # Remove any whitespace/newlines
-    count=$(echo "$count" | tr -d '[:space:]')
+    count=$(grep -c "^- \[${phase_num}-" "$AGENTS_FILE" 2>/dev/null) || true
+    count="${count%%$'\n'*}"; count="${count//[^0-9]/}"; count="${count:-0}"
 
     if [[ "$count" -lt "$max_failures" ]]; then
         return 0  # Under cap, nothing to do
