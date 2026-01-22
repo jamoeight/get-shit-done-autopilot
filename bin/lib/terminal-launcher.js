@@ -134,13 +134,13 @@ function launchPowerShellNode(scriptPath, windowTitle = 'GSD') {
 
 function launchWindowsTerminal(scriptPath, windowTitle = 'GSD') {
   const cwd = process.cwd();
-  // wt.exe spawns WSL/native bash which understands Windows paths with forward slashes
-  const winScript = scriptPath.replace(/\\/g, '/');
+  // wt.exe typically spawns Git Bash on Windows, which needs /c/Users/... format
+  const bashScript = toGitBashPath(scriptPath);
+  const bashCwd = toGitBashPath(cwd);
 
   return spawn('wt.exe', [
     '--title', windowTitle,
-    '-d', cwd,
-    'bash', '-c', `bash "${winScript}"`
+    'bash', '--login', '-c', `cd "${bashCwd}" && bash "${bashScript}"`
   ], {
     detached: true,
     stdio: 'ignore',
@@ -151,14 +151,14 @@ function launchWindowsTerminal(scriptPath, windowTitle = 'GSD') {
 
 function launchWindowsTerminalNode(scriptPath, windowTitle = 'GSD') {
   const cwd = process.cwd();
-  // wt.exe spawns WSL/native bash which understands Windows paths with forward slashes
-  const winScript = scriptPath.replace(/\\/g, '/');
-  const winCwd = cwd.replace(/\\/g, '/');
+  // wt.exe typically spawns Git Bash on Windows, which needs /c/Users/... format
+  // Use --login to ensure node is in PATH
+  const bashScript = toGitBashPath(scriptPath);
+  const bashCwd = toGitBashPath(cwd);
 
   return spawn('wt.exe', [
     '--title', windowTitle,
-    '-d', cwd,
-    'bash', '-c', `node "${winScript}" "${winCwd}"`
+    'bash', '--login', '-c', `cd "${bashCwd}" && node "${bashScript}" "${bashCwd}"`
   ], {
     detached: true,
     stdio: 'ignore',
